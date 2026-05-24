@@ -1,249 +1,137 @@
-# Architecture Plan — Kinopoisk-like Movie App
+# Architecture — Cinema Vision (Next.js)
 
-**Stack:** Next.js 16 · Axios · TanStack Query v5 · Shadcn · TypeScript
+**Stack:** Next.js · Axios · TanStack Query v5 · shadcn/ui (Radix UI) · Tailwind CSS · TypeScript · Manrope font
 
 ---
 
-## Folder Structure
+## Текущее состояние
+
+### Реализовано
 
 ```
 src/
-├── app/                              # Next.js App Router
+├── app/
+│   ├── layout.tsx                        # Root layout: QueryProvider + Manrope font
+│   ├── globals.css
 │   ├── (auth)/
 │   │   ├── login/page.tsx
 │   │   └── register/page.tsx
-│   ├── (main)/
-│   │   ├── layout.tsx                # Header + Footer
-│   │   ├── page.tsx                  # Главная (топ фильмов, подборки)
-│   │   ├── movies/
-│   │   │   ├── page.tsx              # Каталог фильмов с фильтрами
-│   │   │   └── [id]/
-│   │   │       └── page.tsx          # Страница фильма
-│   │   ├── series/
-│   │   │   ├── page.tsx              # Каталог сериалов
-│   │   │   └── [id]/
-│   │   │       └── page.tsx          # Страница сериала
-│   │   ├── person/
-│   │   │   └── [id]/
-│   │   │       └── page.tsx          # Страница актёра / режиссёра
-│   │   ├── genre/
-│   │   │   └── [slug]/
-│   │   │       └── page.tsx          # Фильмы по жанру
-│   │   ├── collections/
-│   │   │   ├── page.tsx              # Подборки
-│   │   │   └── [slug]/
-│   │   │       └── page.tsx          # Конкретная подборка
-│   │   └── profile/
-│   │       ├── page.tsx              # Профиль пользователя
-│   │       ├── watchlist/page.tsx    # Хочу посмотреть
-│   │       ├── watched/page.tsx      # Уже смотрел
-│   │       └── favorites/page.tsx    # Избранное
-│   ├── globals.css
-│   └── layout.tsx                    # Root layout (провайдеры)
+│   └── (main)/
+│       ├── page.tsx
+│       ├── movies/page.tsx
+│       ├── movies/[id]/page.tsx
+│       ├── series/page.tsx
+│       ├── series/[id]/page.tsx
+│       ├── person/page.tsx
+│       ├── person/[id]/page.tsx
+│       └── profile/page.tsx
 │
-├── entities/
-│   ├── movie/
-│   │   ├── api/movie.api.ts          # getMovies, getMovie, getTopMovies
-│   │   ├── hooks/
-│   │   │   ├── useMovie.ts
-│   │   │   ├── useMovies.ts
-│   │   │   └── useTopMovies.ts
-│   │   ├── model/movie.types.ts      # Movie, MovieDetails, Genre, Rating
-│   │   └── ui/
-│   │       ├── MovieCard.tsx         # Карточка в каталоге
-│   │       ├── MovieHero.tsx         # Баннер на странице фильма
-│   │       ├── MovieRating.tsx       # Блок с рейтингом (IMDb, КП)
-│   │       └── MovieTrailer.tsx      # Встроенный трейлер
-│   ├── person/
-│   │   ├── api/person.api.ts         # getPerson, getPersonMovies
-│   │   ├── hooks/usePerson.ts
-│   │   ├── model/person.types.ts     # Person, Role (actor/director/...)
-│   │   └── ui/
-│   │       ├── PersonCard.tsx        # Карточка актёра
-│   │       └── PersonAvatar.tsx
-│   ├── review/
-│   │   ├── api/review.api.ts         # getReviews, createReview
-│   │   ├── hooks/
-│   │   │   ├── useReviews.ts
-│   │   │   └── useCreateReview.ts
-│   │   ├── model/review.types.ts     # Review, ReviewStatus
-│   │   └── ui/
-│   │       ├── ReviewCard.tsx
-│   │       └── ReviewStats.tsx       # Соотношение положительных/негативных
-│   └── user/
-│       ├── api/user.api.ts           # getProfile, updateProfile
-│       ├── hooks/useProfile.ts
-│       ├── model/user.types.ts       # User, WatchlistItem
-│       └── ui/
-│           ├── UserAvatar.tsx
-│           └── UserMenu.tsx
-│
-├── features/
-│   ├── search-movies/
-│   │   ├── hooks/useMovieSearch.ts   # useQuery с debounce
-│   │   └── ui/
-│   │       ├── SearchInput.tsx
-│   │       └── SearchDropdown.tsx    # Быстрые результаты под строкой
-│   ├── filter-movies/
-│   │   ├── model/filters.types.ts    # MovieFilters (genre, year, rating...)
-│   │   └── ui/
-│   │       ├── FilterPanel.tsx
-│   │       └── ActiveFilters.tsx     # Теги активных фильтров
-│   ├── rate-movie/
-│   │   ├── hooks/useRateMovie.ts     # useMutation
-│   │   └── ui/StarRating.tsx
-│   ├── toggle-watchlist/
-│   │   ├── hooks/useToggleWatchlist.ts
-│   │   └── ui/WatchlistButton.tsx
-│   └── auth/
-│       ├── hooks/
-│       │   ├── useLogin.ts
-│       │   └── useRegister.ts
-│       └── ui/
-│           ├── LoginForm.tsx
-│           └── RegisterForm.tsx
-│
-├── widgets/
-│   ├── Header/
-│   │   └── index.tsx                 # Лого + поиск + меню пользователя
-│   ├── Footer/
-│   │   └── index.tsx
-│   ├── MovieCatalog/
-│   │   └── index.tsx                 # Фильтры + сетка карточек + пагинация
-│   ├── MoviePageInfo/
-│   │   └── index.tsx                 # Hero + рейтинг + описание + трейлер
-│   ├── CastSection/
-│   │   └── index.tsx                 # Горизонтальный скролл актёров
-│   ├── ReviewSection/
-│   │   └── index.tsx                 # Список отзывов + форма
-│   ├── SimilarMovies/
-│   │   └── index.tsx                 # Горизонтальный скролл похожих
-│   └── TopMoviesSection/
-│       └── index.tsx                 # Блок топа на главной
+├── providers/
+│   └── query-provider.tsx                # TanStack Query — подключён в layout.tsx
 │
 ├── shared/
 │   ├── api/
-│   │   ├── axios.instance.ts         # baseURL, auth interceptor, error interceptor
-│   │   └── query-keys.ts             # Фабрики ключей
+│   │   └── axios.instance.ts             # Один инстанс: baseURL + X-API-Key из env
+│   ├── constants/
+│   │   └── search.ts                     # searchData (all / films / serials / cartoon)
 │   ├── lib/
-│   │   ├── utils.ts                  # cn(), formatDate(), formatRuntime()
-│   │   └── debounce.ts
+│   │   └── utils.ts                      # cn()
 │   ├── types/
-│   │   └── api.types.ts              # ApiResponse<T>, PaginatedResponse<T>
-│   └── ui/                           # shadcn-компоненты
+│   │   └── api.types.ts                  # Premier, PremierResponse
+│   └── ui/                               # shadcn-компоненты
+│       ├── avatar.tsx
 │       ├── button.tsx
+│       ├── button-group.tsx
+│       ├── field.tsx
 │       ├── input.tsx
-│       ├── badge.tsx
-│       ├── dialog.tsx
-│       ├── skeleton.tsx              # Скелетоны для загрузки
-│       └── ...
+│       ├── label.tsx
+│       ├── select.tsx
+│       └── separator.tsx
+│
+└── widgets/
+    ├── Header/
+    │   └── index.tsx                     # SearchSelect + Search + UserNotify + UserMenu
+    ├── Search/
+    │   └── index.tsx                     # Input + Button (без логики)
+    ├── SearchSelect/
+    │   └── index.tsx                     # Select по searchData, useState
+    ├── UserMenu/
+    │   └── index.tsx                     # Avatar + имя (хардкод)
+    └── UserNotify/
+        └── index.tsx                     # Bell-иконка (заглушка)
+```
+
+### Не реализовано
+
+- `Sidebar` — отсутствует (есть в `cinema-vision`, нужно перенести)
+- `entities/` — слой не создан (movie, person, review, user)
+- `features/` — слой не создан (search, filter, auth, watchlist, rate)
+- Страницы — файлы есть, контент пустой
+- Поиск — нет логики, только UI
+- `UserMenu` — хардкод вместо данных пользователя
+
+---
+
+## Целевая структура (FSD)
+
+```
+src/
+├── app/                                  # Next.js App Router
+│   ├── (auth)/login · register
+│   └── (main)/
+│       ├── layout.tsx                    # Sidebar + Header
+│       ├── page.tsx                      # Главная
+│       ├── movies/[id]
+│       ├── series/[id]
+│       ├── person/[id]
+│       ├── profile/
+│       │   ├── watchlist/
+│       │   ├── watched/
+│       │   └── favorites/
+│       └── collections/[slug]
+│
+├── entities/
+│   ├── movie/   (api · hooks · model · ui)
+│   ├── person/  (api · hooks · model · ui)
+│   ├── review/  (api · hooks · model · ui)
+│   └── user/    (api · hooks · model · ui)
+│
+├── features/
+│   ├── search-movies/
+│   ├── filter-movies/
+│   ├── rate-movie/
+│   ├── toggle-watchlist/
+│   └── auth/
+│
+├── widgets/
+│   ├── Header/
+│   ├── Sidebar/
+│   ├── Footer/
+│   ├── MovieCatalog/
+│   ├── MoviePageInfo/
+│   ├── CastSection/
+│   ├── ReviewSection/
+│   ├── SimilarMovies/
+│   └── TopMoviesSection/
+│
+├── shared/
+│   ├── api/
+│   │   ├── axios.instance.ts
+│   │   └── query-keys.ts
+│   ├── constants/
+│   ├── lib/
+│   ├── types/
+│   └── ui/
 │
 └── providers/
-    └── query-provider.tsx
 ```
 
 ---
 
-## Key Conventions
-
-### `shared/api/axios.instance.ts`
-
-```ts
-import axios from 'axios'
-
-export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
-})
-
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
-  if (token) config.headers.Authorization = `Bearer ${token}`
-  return config
-})
-
-api.interceptors.response.use(
-  (r) => r,
-  (error) => {
-    if (error.response?.status === 401) {
-      // редирект на логин
-    }
-    return Promise.reject(error)
-  },
-)
-```
-
-### `shared/api/query-keys.ts`
-
-```ts
-export const movieKeys = {
-  all: ['movies'] as const,
-  list: (filters: MovieFilters) => [...movieKeys.all, 'list', filters] as const,
-  detail: (id: number) => [...movieKeys.all, 'detail', id] as const,
-  top: () => [...movieKeys.all, 'top'] as const,
-}
-
-export const personKeys = {
-  all: ['persons'] as const,
-  detail: (id: number) => [...personKeys.all, 'detail', id] as const,
-}
-
-export const reviewKeys = {
-  byMovie: (movieId: number) => ['reviews', movieId] as const,
-}
-```
-
-### `entities/movie/model/movie.types.ts`
-
-```ts
-export interface Movie {
-  id: number
-  title: string
-  originalTitle: string
-  poster: string
-  year: number
-  genres: Genre[]
-  rating: { kp: number; imdb: number }
-  duration: number           // минуты
-}
-
-export interface MovieDetails extends Movie {
-  description: string
-  trailer: string
-  cast: Person[]
-  director: Person
-  similar: Movie[]
-}
-
-export interface Genre {
-  id: number
-  name: string
-  slug: string
-}
-```
-
-### `shared/types/api.types.ts`
-
-```ts
-export interface ApiResponse<T> {
-  data: T
-  success: boolean
-  message: string
-}
-
-export interface PaginatedResponse<T> {
-  data: T[]
-  total: number
-  page: number
-  limit: number
-}
-```
-
----
-
-## Layer Rules
+## Правила импортов (FSD)
 
 | Слой | Может импортировать |
-|------|---------------------|
+|---|---|
 | `app/` | widgets, features, entities, shared |
 | `widgets/` | features, entities, shared |
 | `features/` | entities, shared |
@@ -252,14 +140,22 @@ export interface PaginatedResponse<T> {
 
 ---
 
-## Path Aliases
+## API
+
+```ts
+// shared/api/axios.instance.ts
+export const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  headers: { "X-API-Key": process.env.NEXT_PUBLIC_API_KEY },
+});
+```
+
+Источник данных — Kinopoisk API Unofficial. Переменные окружения: `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_API_KEY`.
+
+---
+
+## Path Alias
 
 ```json
-{
-  "compilerOptions": {
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
-}
+{ "paths": { "@/*": ["./src/*"] } }
 ```

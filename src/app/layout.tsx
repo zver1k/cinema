@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html
       lang="ru"
-      className={cn("h-full", "antialiased", "font-sans", manrope.variable)}
+      className={cn("dark", "h-full", "antialiased", "font-sans", manrope.variable)}
     >
       <body className="min-h-full flex flex-col">
         <QueryProvider>{children}</QueryProvider>
