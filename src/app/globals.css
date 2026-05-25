@@ -45,7 +45,6 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
 }
 
@@ -131,4 +130,8 @@
   html {
     @apply font-sans;
   }
+}
+
+.swiper {
+  --swiper-theme-color: oklch(0.437 0.078 188.216) !important;
 }
