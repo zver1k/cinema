@@ -85,11 +85,17 @@ export default async function MoviePage({
               {movie.nameOriginal} · {movie.year}
             </div>
             <div className="mb-4.5 flex flex-wrap items-center gap-4.5 text-[14px]">
-              <span className="inline-flex items-center gap-1.5 rounded-[6px] bg-green-500 px-2.5 py-1 text-[14px] font-bold text-[#06140b]">
-                ★ {movie.ratingKinopoisk}
-              </span>
-              <span>{movie.filmLength} мин</span>
-              <span>·</span>
+              {movie.ratingKinopoisk && (
+                <span className="inline-flex items-center gap-1.5 rounded-[6px] bg-green-500 px-2.5 py-1 text-[14px] font-bold text-[#06140b]">
+                  ★ {movie.ratingKinopoisk}
+                </span>
+              )}
+              {movie.filmLength && (
+                <>
+                  <span>{movie.filmLength} мин</span>
+                  <span>·</span>
+                </>
+              )}
               <span className="flex gap-2">
                 {movie.countries.map((country) => {
                   return (
