@@ -12,7 +12,7 @@ import Link from "next/link";
 function CollectionSwiper({ items }: { items: Film[] }) {
   return (
     <Swiper
-      style={{ width: "100%" }}
+      style={{ width: "100%", paddingBottom: "35px" }}
       slidesPerView={1}
       spaceBetween={10}
       navigation={true}
@@ -21,15 +21,15 @@ function CollectionSwiper({ items }: { items: Film[] }) {
       }}
       breakpoints={{
         640: {
-          slidesPerView: 3,
+          slidesPerView: 2,
           spaceBetween: 10,
         },
         768: {
-          slidesPerView: 6,
+          slidesPerView: 4,
           spaceBetween: 10,
         },
         1024: {
-          slidesPerView: 8,
+          slidesPerView: 6,
           spaceBetween: 10,
         },
       }}

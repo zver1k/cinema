@@ -9,7 +9,7 @@ async function CollectionSection({
   type: CollectionType;
   title: string;
 }) {
-  const { items } = await getCollection(type);
+  const { items = [] } = await getCollection(type);
   return (
     <div className="w-full min-w-0 overflow-hidden">
       <h2 className="text-4xl text-center m-2">{title}</h2>

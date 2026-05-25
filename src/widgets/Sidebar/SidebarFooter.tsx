@@ -4,7 +4,7 @@ import { getRandomItems } from "@/shared/lib/array";
 import { getFilmPremieres } from "@/shared/api/premieres";
 
 async function SidebarFooter() {
-  const { items } = await getFilmPremieres();
+  const { items = [] } = await getFilmPremieres();
   const randomItems = getRandomItems(items, 5);
   const date = new Date();
   const month = new Intl.DateTimeFormat("ru-RU", {

@@ -9,18 +9,18 @@ function FilmCard({ film }: { film: Film }) {
     return "bg-red-500";
   }
   return (
-    <Card className="relative w-full pt-0">
-      <div className="relative aspect-2/3 w-full overflow-hidden rounded-t-xl">
+    <Card className="relative w-full pt-0 overflow-hidden ">
+      <div className="relative aspect-2/3 w-full overflow-hidden">
         <Image
           src={film.posterUrlPreview}
           alt={film.nameRu ?? film.nameEn ?? "Логотип"}
           fill
-          sizes="(max-width: 639px) calc(100vw - 80px), (max-width: 1023px) calc((100vw - 96px) / 2), (max-width: 1535px) calc((100vw - 416px) / 3), calc((100vw - 432px) / 4)"
+          sizes="(max-width: 639px) calc(100vw), (max-width: 767px) calc((100vw - 10px) / 2), (max-width: 1023px) calc((100vw - 350px) / 4), calc((100vw - 370px) / 6)"
           className="object-cover"
         />
         {film.ratingKinopoisk && (
           <span
-            className={`absolute top-2 left-2 px-2 py-0.5 ${getRatingColor(film.ratingKinopoisk)}`}
+            className={`absolute top-2 left-2 px-2 py-0.5 rounded-full ${getRatingColor(film.ratingKinopoisk)}`}
           >
             {film.ratingKinopoisk}
           </span>
