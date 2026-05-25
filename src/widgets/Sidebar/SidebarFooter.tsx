@@ -1,9 +1,11 @@
-// import { getFilmPremieres } from "@/shared/api/premieres";
 import Link from "next/link";
-import { mockPremieres } from "@/shared/mocks/premieres";
+import Image from "next/image";
+import { getRandomItems } from "@/shared/lib/array";
+import { getFilmPremieres } from "@/shared/api/premieres";
 
 async function SidebarFooter() {
-  const { items } = mockPremieres;
+  const { items } = await getFilmPremieres();
+  const randomItems = getRandomItems(items, 5);
   const date = new Date();
   const month = new Intl.DateTimeFormat("ru-RU", {
     month: "long",
@@ -14,7 +16,7 @@ async function SidebarFooter() {
       <span className="font-bold text-white">
         Новинки {month} {year}
       </span>
-      {items.slice(0, 5).map((film) => {
+      {randomItems.map((film) => {
         const formatted = new Intl.DateTimeFormat("ru-RU", {
           day: "numeric",
           month: "long",
@@ -22,14 +24,17 @@ async function SidebarFooter() {
         }).format(new Date(film.premiereRu));
 
         return (
-          <div
+          <Link
+            href={`/films/${film.kinopoiskId}`}
             key={film.kinopoiskId}
             className="flex items-center gap-3 cursor-pointer group"
           >
-            <img
+            <Image
               src={film.posterUrlPreview}
               alt={film.nameRu || film.nameEn || film.premiereRu}
-              className="h-16 w-12 rounded-lg object-cover"
+              height={64}
+              width={48}
+              className="rounded-lg object-cover"
             />
             <div className="flex flex-col gap-2">
               <span className="text-sm text-white transition group-hover:text-primary">
@@ -39,7 +44,7 @@ async function SidebarFooter() {
                 {formatted}
               </span>
             </div>
-          </div>
+          </Link>
         );
       })}
       <Link className="text-center" href="/new">
