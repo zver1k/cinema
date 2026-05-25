@@ -1,4 +1,4 @@
-import { FilmResponse } from "@/shared/types/api.types";
+import { FilmDetail, FilmResponse } from "@/shared/types/api.types";
 
 export const getFilms = async (genreID?: number) => {
   const params = new URLSearchParams();
@@ -13,5 +13,18 @@ export const getFilms = async (genreID?: number) => {
     },
   );
   const response: FilmResponse = await data.json();
+  return response;
+};
+
+export const getFilmsById = async (id: string) => {
+  const data = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/v2.2/films/${id}`,
+    {
+      headers: {
+        "X-API-KEY": process.env.API_KEY!,
+      },
+    },
+  );
+  const response: FilmDetail = await data.json();
   return response;
 };

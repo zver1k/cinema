@@ -77,3 +77,18 @@ export type FilmResponse = {
   totalPages: number;
   items: Film[];
 };
+
+export type FilmDetail = {
+  kinopoiskId: number;
+  nameRu: string | null;
+  nameEn: string | null;
+  nameOriginal: string | null;
+  posterUrl: string;
+  ratingKinopoisk: number | null;
+  description: string | null;
+  filmLength: number | null;
+  genres: { genre: string }[];
+  countries: { country: string }[];
+  slogan: string | null;
+  year: number | null;
+};

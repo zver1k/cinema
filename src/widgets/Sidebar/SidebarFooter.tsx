@@ -25,7 +25,7 @@ async function SidebarFooter() {
 
         return (
           <Link
-            href={`/films/${film.kinopoiskId}`}
+            href={`/movies/${film.kinopoiskId}`}
             key={film.kinopoiskId}
             className="flex items-center gap-3 cursor-pointer group"
           >

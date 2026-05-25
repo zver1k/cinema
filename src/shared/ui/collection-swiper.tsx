@@ -40,7 +40,7 @@ function CollectionSwiper({ items }: { items: Film[] }) {
           <SwiperSlide key={item.kinopoiskId}>
             <Link
               className="cursor-pointer"
-              href={`/films/${item.kinopoiskId}`}
+              href={`/movies/${item.kinopoiskId}`}
             >
               <FilmCard film={item} />
             </Link>
