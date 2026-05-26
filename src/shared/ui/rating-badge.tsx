@@ -1,4 +1,5 @@
 function RatingBadge({ value }: { value: number }) {
+
   const ratingColor =
     value >= 7 ? "bg-green-500" : value >= 5 ? "bg-yellow-500" : "bg-red-500";
 

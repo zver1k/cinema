@@ -160,3 +160,18 @@ export type ExternalSourceType = {
   total: number;
   items: ExternalSource[];
 };
+
+export type SimilarFilm = {
+  filmId: number;
+  nameRu: string | null;
+  nameEn: string | null;
+  nameOriginal: string | null;
+  posterUrl: string;
+  posterUrlPreview: string;
+  relationType: "SIMILAR";
+};
+
+export type SimilarFilmResponse = {
+  total: number;
+  items: SimilarFilm[];
+};

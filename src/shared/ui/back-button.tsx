@@ -9,7 +9,7 @@ function BackButton() {
   return (
     <Button
       className="transition hover:text-primary"
-      variant="outline"
+      variant="ghost"
       onClick={() => router.back()}
     >
       <CircleArrowLeft size={16} />

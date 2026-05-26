@@ -34,7 +34,7 @@ async function SidebarFooter() {
               alt={film.nameRu || film.nameEn || film.premiereRu}
               height={64}
               width={48}
-              className="rounded-lg object-cover"
+              className="h-16 w-12 shrink-0 rounded-lg object-cover"
             />
             <div className="flex flex-col gap-2">
               <span className="text-sm text-white transition group-hover:text-primary">

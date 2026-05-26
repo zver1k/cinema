@@ -1,10 +1,16 @@
-import { Film } from "@/shared/types/api.types";
+import { Film, SimilarFilm } from "@/shared/types/api.types";
 import Image from "next/image";
-import { Card, CardHeader, CardTitle } from "@/shared/ui/card";
+import { Card } from "@/shared/ui/card";
 import RatingBadge from "@/shared/ui/rating-badge";
 
-function FilmCard({ film }: { film: Film }) {
-  const rating = film.ratingKinopoisk;
+function FilmCard({
+  film,
+  eager = false,
+}: {
+  film: Film | SimilarFilm;
+  eager?: boolean;
+}) {
+  const rating = "ratingKinopoisk" in film ? film.ratingKinopoisk : null;
 
   return (
     <Card className="relative w-full pt-0 overflow-hidden transition hover:scale-103">
@@ -14,17 +20,13 @@ function FilmCard({ film }: { film: Film }) {
           alt={film.nameRu ?? film.nameEn ?? "Логотип"}
           fill
           sizes="(max-width: 639px) calc(100vw), (max-width: 767px) calc((100vw - 10px) / 2), (max-width: 1023px) calc((100vw - 350px) / 4), calc((100vw - 370px) / 6)"
+          loading={eager ? "eager" : undefined}
           className="object-cover"
         />
         <div className="absolute top-2 left-2">
           {rating && <RatingBadge value={rating} />}
         </div>
       </div>
-      <CardHeader>
-        <CardTitle className="truncate">
-          {film.nameRu ?? film.nameEn ?? "Без названия"}
-        </CardTitle>
-      </CardHeader>
     </Card>
   );
 }

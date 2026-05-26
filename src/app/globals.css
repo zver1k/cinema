@@ -133,10 +133,16 @@
 }
 
 .swiper {
-  --swiper-theme-color: oklch(0.437 0.078 188.216);
-  --swiper-navigation-size: 64px
+  --swiper-theme-color: oklch(0.437 0.078 188.216) !important;
+  --swiper-navigation-size: 64px;
+
 }
 
 .swiper-wrapper {
   align-items: flex-start;
+  padding: 20px;
+}
+
+.swiper-pagination {
+  bottom: -4px !important;
 }

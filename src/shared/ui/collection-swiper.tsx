@@ -4,45 +4,41 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 
-import { Film } from "@/shared/types/api.types";
+import { Film, SimilarFilm } from "@/shared/types/api.types";
 import FilmCard from "@/shared/ui/film-card";
 import { Pagination, Navigation } from "swiper/modules";
 import Link from "next/link";
+import { sliderBreakpoints } from "@/shared/constants/slider-breakpoints";
+import { SwiperOptions } from "swiper/types";
 
-function CollectionSwiper({ items }: { items: Film[] }) {
+function CollectionSwiper({
+  items,
+  eagerFirstImage = false,
+  breakpoints = sliderBreakpoints,
+}: {
+  items: Film[] | SimilarFilm[];
+  eagerFirstImage?: boolean;
+  breakpoints?: SwiperOptions["breakpoints"];
+}) {
   return (
     <Swiper
-      style={{ width: "100%", paddingBottom: "35px" }}
+      className="collection-swiper"
       slidesPerView={1}
       spaceBetween={10}
       navigation={true}
       pagination={{
         clickable: true,
       }}
-      breakpoints={{
-        640: {
-          slidesPerView: 2,
-          spaceBetween: 10,
-        },
-        768: {
-          slidesPerView: 4,
-          spaceBetween: 10,
-        },
-        1024: {
-          slidesPerView: 6,
-          spaceBetween: 10,
-        },
-      }}
+      breakpoints={breakpoints}
       modules={[Pagination, Navigation]}
     >
-      {items.map((item) => {
+      {items.map((item, index) => {
+        const id = "filmId" in item ? item.filmId : item.kinopoiskId;
+
         return (
-          <SwiperSlide key={item.kinopoiskId}>
-            <Link
-              className="cursor-pointer"
-              href={`/movies/${item.kinopoiskId}`}
-            >
-              <FilmCard film={item} />
+          <SwiperSlide key={id}>
+            <Link className="cursor-pointer" href={`/movies/${id}`}>
+              <FilmCard film={item} eager={eagerFirstImage && index === 0} />
             </Link>
           </SwiperSlide>
         );

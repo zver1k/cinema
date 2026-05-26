@@ -8,6 +8,8 @@ import RatingBadge from "@/shared/ui/rating-badge";
 import CastSection from "@/app/(main)/movies/[id]/_components/cast-section";
 import ReviewsSection from "@/app/(main)/movies/[id]/_components/reviews-section";
 import StreamChips from "@/app/(main)/movies/[id]/_components/stream-chips";
+import { getCastById } from "@/shared/api/cast";
+import SimilarSection from "@/widgets/SimilarSection";
 
 export default async function MoviePage({
   params,
@@ -16,6 +18,9 @@ export default async function MoviePage({
 }) {
   const { id } = await params;
   const movie = await getFilmsById(id);
+  const director = await getCastById(id);
+  const directorName = director.find((c) => c.professionKey === "DIRECTOR");
+
   const inFav = true;
   const inWatch = true;
   const rating = movie.ratingKinopoisk;
@@ -31,6 +36,8 @@ export default async function MoviePage({
                 src={movie.posterUrl}
                 alt={movie.nameRu ?? movie.nameEn ?? "Логотип"}
                 fill
+                sizes="(max-width: 1023px) 100vw, (max-width: 1535px) 30vw, 380px"
+                loading="eager"
                 className="object-cover"
               />
             </div>
@@ -49,21 +56,13 @@ export default async function MoviePage({
             </div>
             <div className="mt-4">Блок фактов</div>
           </div>
-          <div className="flex flex-col gap-2">
+          <div className="min-w-0 flex flex-col gap-2">
             <div className="flex gap-2">
               {movie.genres.map((genre) => {
                 return <Badge key={genre.genre}>{genre.genre}</Badge>;
               })}
             </div>
-            <h1
-              style={{
-                fontSize: 54,
-                fontWeight: 700,
-                margin: "0 0 4px",
-                letterSpacing: "-.025em",
-                lineHeight: 1.02,
-              }}
-            >
+            <h1 className="mb-1 text-[54px] font-bold leading-[1.02] tracking-tight">
               {movie.nameRu}
             </h1>
             <div className="text-ring text-[18px] mb-6">
@@ -87,8 +86,13 @@ export default async function MoviePage({
                   );
                 })}
               </span>
-              <span>·</span>
-              <span>Реж.</span>
+
+              {directorName && (
+                <>
+                  <span>·</span>
+                  <span>Реж. {directorName.nameRu || directorName.nameEn}</span>
+                </>
+              )}
             </div>
             {movie.slogan && (
               <p className="font-light text-2xl border-l-3 pl-4 mb-7">
@@ -101,22 +105,10 @@ export default async function MoviePage({
                 {movie.description}
               </p>
             </div>
-            <div className="mb-9">
-              <h3 className="mb-3.5 text-[18px] font-semibold">Где смотреть</h3>
-              <StreamChips id={id} />
-            </div>
-            <div className="mb-9">
-              <h3 className="mb-3.5 text-[18px] font-semibold">В ролях</h3>
-              <CastSection id={id} />
-            </div>
-            <div className="mb-9">
-              <h3 className="mb-3.5 text-[18px] font-semibold">Рецензии</h3>
-              <ReviewsSection id={id} />
-            </div>
-            <div className="mb-9">
-              <h3 className="mb-3.5 text-[18px] font-semibold">Похожее</h3>
-              {/*<SimilarSection movie={movie} navigate={navigate} />*/}
-            </div>
+            <StreamChips id={id} />
+            <CastSection id={id} />
+            <ReviewsSection id={id} />
+            <SimilarSection id={id} />
           </div>
         </div>
       </div>
