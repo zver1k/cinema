@@ -55,8 +55,6 @@ export type CollectionType =
   | "KIDS_ANIMATION_THEME"
   | "POPULAR_SERIES";
 
-export type CollectionResponse = FilmResponse;
-
 export type Film = {
   kinopoiskId: number;
   nameRu: string | null;
@@ -91,4 +89,74 @@ export type FilmDetail = {
   countries: { country: string }[];
   slogan: string | null;
   year: number | null;
+};
+
+export type StaffType =
+  | "WRITER"
+  | "OPERATOR"
+  | "EDITOR"
+  | "COMPOSER"
+  | "PRODUCER_USSR"
+  | "TRANSLATOR"
+  | "DIRECTOR"
+  | "DESIGN"
+  | "PRODUCER"
+  | "ACTOR"
+  | "VOICE_DIRECTOR"
+  | "UNKNOWN ";
+
+export type Staff = {
+  staffId: number;
+  nameRu: string | null;
+  nameEn: string | null;
+  description: string | null;
+  posterUrl: string;
+  professionText: string;
+  professionKey: StaffType;
+};
+
+export type ReviewsType = "POSITIVE" | "NEGATIVE" | "NEUTRAL" | "UNKNOWN";
+
+export type Reviews = {
+  kinopoiskId: number;
+  type: ReviewsType;
+  date: string;
+  positiveRating: number;
+  negativeRating: number;
+  author: string;
+  title: string | null;
+  description: string;
+};
+
+export type ReviewOrder =
+  | "DATE_ASC"
+  | "DATE_DESC"
+  | "USER_POSITIVE_RATING_ASC"
+  | "USER_POSITIVE_RATING_DESC"
+  | "USER_NEGATIVE_RATING_ASC"
+  | "USER_NEGATIVE_RATING_DESC";
+
+export type ReviewResponse = {
+  total: number;
+  totalPages: number;
+  totalPositiveReviews: number;
+  totalNegativeReviews: number;
+  totalNeutralReviews: number;
+  items: Reviews[];
+};
+
+export type ExternalSource = {
+  url: string;
+  platform: string;
+  logoUrl: string;
+  positiveRating: number;
+  negativeRating: number;
+  author: string;
+  title: string | null;
+  description: string;
+};
+
+export type ExternalSourceType = {
+  total: number;
+  items: ExternalSource[];
 };
