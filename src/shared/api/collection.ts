@@ -14,6 +14,8 @@ export const getCollection = async (type: CollectionType, page: number = 1) => {
       next: { revalidate: 86400 },
     },
   );
+  if (!data.ok)
+    throw new Error(`Ошибка: ${data.status}, подробнее: ${data.statusText}`);
   const response: FilmResponse = await data.json();
   return response;
 };

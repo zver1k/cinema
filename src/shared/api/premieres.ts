@@ -23,6 +23,8 @@ export const getFilmPremieres = async () => {
       next: { revalidate },
     },
   );
+  if (!data.ok)
+    throw new Error(`Ошибка: ${data.status}, подробнее: ${data.statusText}`);
   const response: PremierResponse = await data.json();
   return response;
 };

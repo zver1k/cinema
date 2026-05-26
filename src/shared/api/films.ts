@@ -1,4 +1,5 @@
 import { FilmDetail, FilmResponse } from "@/shared/types/api.types";
+import { notFound } from "next/navigation";
 
 export const getFilms = async (genreID?: number) => {
   const params = new URLSearchParams();
@@ -12,6 +13,8 @@ export const getFilms = async (genreID?: number) => {
       next: { revalidate: 3600 },
     },
   );
+  if (!data.ok)
+    throw new Error(`Ошибка: ${data.status}, подробнее: ${data.statusText}`);
   const response: FilmResponse = await data.json();
   return response;
 };
@@ -25,6 +28,9 @@ export const getFilmsById = async (id: string) => {
       },
     },
   );
+  if (data.status === 404 || data.status === 400) return notFound();
+  if (!data.ok)
+    throw new Error(`Ошибка: ${data.status}, подробнее: ${data.statusText}`);
   const response: FilmDetail = await data.json();
   return response;
 };

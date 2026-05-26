@@ -9,6 +9,8 @@ export const getExternalById = async (id: string) => {
       },
     },
   );
+  if (!data.ok)
+    throw new Error(`Ошибка: ${data.status}, подробнее: ${data.statusText}`);
   const response: ExternalSourceType = await data.json();
   return response;
 };

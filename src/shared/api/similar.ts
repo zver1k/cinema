@@ -9,6 +9,8 @@ export const getSimilarById = async (id: string) => {
       },
     },
   );
+  if (!data.ok)
+    throw new Error(`Ошибка: ${data.status}, подробнее: ${data.statusText}`);
   const response: SimilarFilmResponse = await data.json();
   return response;
 };

@@ -13,6 +13,8 @@ export const getReviewsById = async (
       },
     },
   );
+  if (!data.ok)
+    throw new Error(`Ошибка: ${data.status}, подробнее: ${data.statusText}`);
   const response: ReviewResponse = await data.json();
   return response;
 };

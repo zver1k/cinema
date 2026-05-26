@@ -10,6 +10,8 @@ export const getFilters = async () => {
       next: { revalidate: 2592000 },
     },
   );
+  if (!data.ok)
+    throw new Error(`Ошибка: ${data.status}, подробнее: ${data.statusText}`);
   const response: FilterResponse = await data.json();
   return response;
 };
