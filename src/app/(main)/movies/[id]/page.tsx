@@ -1,9 +1,13 @@
 import { getFilmsById } from "@/shared/api/films";
 import Image from "next/image";
-import { Bookmark, CircleArrowLeft, Heart, Play } from "lucide-react";
+import { Bookmark, Heart, Play } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
-import Link from "next/link";
+import BackButton from "@/shared/ui/back-button";
+import RatingBadge from "@/shared/ui/rating-badge";
+import CastSection from "@/app/(main)/movies/[id]/_components/cast-section";
+import ReviewsSection from "@/app/(main)/movies/[id]/_components/reviews-section";
+import StreamChips from "@/app/(main)/movies/[id]/_components/stream-chips";
 
 export default async function MoviePage({
   params,
@@ -14,25 +18,13 @@ export default async function MoviePage({
   const movie = await getFilmsById(id);
   const inFav = true;
   const inWatch = true;
+  const rating = movie.ratingKinopoisk;
+
   return (
     <>
       <div className="min-w-0 px-9 pt-8 pb-15">
-        <Link
-          className="flex gap-2 items-center transition hover:text-primary"
-          href={"/"}
-        >
-          <CircleArrowLeft size={16} />
-          Назад
-        </Link>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "minmax(280px, 380px) 1fr",
-            gap: 50,
-            maxWidth: 1200,
-            margin: "0 auto",
-          }}
-        >
+        <BackButton />
+        <div className="mx-auto grid max-w-300 grid-cols-[minmax(280px,380px)_1fr] gap-12.5">
           <div>
             <div className="relative aspect-2/3 w-full overflow-hidden rounded-t-xl">
               <Image
@@ -42,16 +34,9 @@ export default async function MoviePage({
                 className="object-cover"
               />
             </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 10,
-                marginTop: 18,
-              }}
-            >
+            <div className="mt-4.5 flex flex-col gap-2.5">
               <Button>
-                <Play size={16} />* Смотреть
+                <Play size={16} /> Смотреть
               </Button>
               <Button>
                 <Heart size={16} />
@@ -62,7 +47,7 @@ export default async function MoviePage({
                 {inWatch ? "В списке" : "Хочу посмотреть"}
               </Button>
             </div>
-            <div style={{ marginTop: 18 }}>Блок фактов</div>
+            <div className="mt-4">Блок фактов</div>
           </div>
           <div className="flex flex-col gap-2">
             <div className="flex gap-2">
@@ -85,11 +70,8 @@ export default async function MoviePage({
               {movie.nameOriginal} · {movie.year}
             </div>
             <div className="mb-4.5 flex flex-wrap items-center gap-4.5 text-[14px]">
-              {movie.ratingKinopoisk && (
-                <span className="inline-flex items-center gap-1.5 rounded-[6px] bg-green-500 px-2.5 py-1 text-[14px] font-bold text-[#06140b]">
-                  ★ {movie.ratingKinopoisk}
-                </span>
-              )}
+              {rating && <RatingBadge value={rating} />}
+
               {movie.filmLength && (
                 <>
                   <span>{movie.filmLength} мин</span>
@@ -121,17 +103,15 @@ export default async function MoviePage({
             </div>
             <div className="mb-9">
               <h3 className="mb-3.5 text-[18px] font-semibold">Где смотреть</h3>
-              {/*<StreamChips streams={movie.streams} />*/}
+              <StreamChips id={id} />
             </div>
             <div className="mb-9">
-              <h3 className="mb-3.5 text-[18px] font-semibold">
-                В главных ролях
-              </h3>
-              {/*<CastSection cast={movie.cast} />*/}
+              <h3 className="mb-3.5 text-[18px] font-semibold">В ролях</h3>
+              <CastSection id={id} />
             </div>
             <div className="mb-9">
               <h3 className="mb-3.5 text-[18px] font-semibold">Рецензии</h3>
-              {/*<ReviewsSection reviews={reviews} />*/}
+              <ReviewsSection id={id} />
             </div>
             <div className="mb-9">
               <h3 className="mb-3.5 text-[18px] font-semibold">Похожее</h3>
