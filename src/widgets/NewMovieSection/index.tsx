@@ -35,6 +35,7 @@ export function NewMovieSection() {
                 fill
                 priority={index === 0}
                 sizes="(max-width: 639px) calc(100vw - 80px), (max-width: 1023px) calc((100vw - 96px) / 2), (max-width: 1535px) calc((100vw - 416px) / 3), calc((100vw - 432px) / 4)"
+                unoptimized
                 className="object-cover"
               />
             </div>

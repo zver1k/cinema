@@ -1,5 +1,4 @@
 import { getFilmsById } from "@/shared/api/films";
-import Image from "next/image";
 import { Bookmark, Heart, Play } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
@@ -10,6 +9,7 @@ import ReviewsSection from "@/app/(main)/movies/[id]/_components/reviews-section
 import StreamChips from "@/app/(main)/movies/[id]/_components/stream-chips";
 import { getCastById } from "@/shared/api/cast";
 import SimilarSection from "@/widgets/SimilarSection";
+import Poster from "@/shared/ui/poster";
 
 export default async function MoviePage({
   params,
@@ -31,16 +31,7 @@ export default async function MoviePage({
         <BackButton />
         <div className="mx-auto grid max-w-300 grid-cols-[minmax(280px,380px)_1fr] gap-12.5">
           <div>
-            <div className="relative aspect-2/3 w-full overflow-hidden rounded-t-xl">
-              <Image
-                src={movie.posterUrl}
-                alt={movie.nameRu ?? movie.nameEn ?? "Логотип"}
-                fill
-                sizes="(max-width: 1023px) 100vw, (max-width: 1535px) 30vw, 380px"
-                loading="eager"
-                className="object-cover"
-              />
-            </div>
+            <Poster movie={movie} />
             <div className="mt-4.5 flex flex-col gap-2.5">
               <Button>
                 <Play size={16} /> Смотреть

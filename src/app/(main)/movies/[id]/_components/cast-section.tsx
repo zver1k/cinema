@@ -23,6 +23,7 @@ async function CastSection({ id }: { id: string }) {
                   alt={c.nameRu ?? String(c.staffId)}
                   width={80}
                   height={80}
+                  unoptimized
                   className="h-full w-full object-cover"
                 />
               </div>
