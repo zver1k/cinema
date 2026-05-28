@@ -36,7 +36,7 @@ function LoginForm() {
       password: formData.password,
     });
     if (error) {
-      toast(`Не верный Email или пароль`);
+      toast(`Неверный Email или пароль`);
     }
     if (data) {
       toast("Вы успешно авторизовались!");
@@ -48,23 +48,13 @@ function LoginForm() {
       <FieldGroup className="gap-4">
         <Field>
           <FieldLabel htmlFor="login">Email</FieldLabel>
-          <Input
-            {...register("email")}
-            id="email"
-            type="text"
-            placeholder="damir@example.com"
-          />
+          <Input {...register("email")} id="email" type="text" />
           <p>{errors.email?.message}</p>
         </Field>
 
         <Field>
           <FieldLabel htmlFor="password">Пароль</FieldLabel>
-          <Input
-            {...register("password")}
-            id="password"
-            type="password"
-            placeholder="Минимум 8 символов"
-          />
+          <Input {...register("password")} id="password" type="password" />
           <p>{errors.password?.message}</p>
           <div className="flex items-center justify-between gap-3">
             <FieldDescription>Минимум 8 символов</FieldDescription>

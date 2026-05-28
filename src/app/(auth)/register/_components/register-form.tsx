@@ -45,7 +45,7 @@ function RegisterForm() {
       password: formData.password,
     });
     if (error) {
-      toast(`Ошибка при регистрации: ${error.message}: ${error?.statusText}`);
+      toast(`Ошибка при регистрации: ${error.message}`);
     }
     if (data) {
       toast("Вы успешно зарегистрировались!");
@@ -57,38 +57,22 @@ function RegisterForm() {
       <FieldGroup className="gap-4">
         <Field>
           <FieldLabel htmlFor="name">Никнейм</FieldLabel>
-          <Input
-            {...register("name")}
-            id="name"
-            type="text"
-            placeholder="damirmedia"
-          />
+          <Input {...register("name")} id="name" type="text" />
           <FieldDescription>3-20 символов, латиница и цифры</FieldDescription>
           <p>{errors.name?.message}</p>
         </Field>
 
         <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
-          <Input
-            {...register("email")}
-            id="email"
-            type="email"
-            placeholder="damir@example.com"
-          />
+          <Input {...register("email")} id="email" type="email" />
           <p>{errors.email?.message}</p>
         </Field>
 
         <Field>
           <FieldLabel htmlFor="password">Пароль</FieldLabel>
-          <Input
-            {...register("password")}
-            id="password"
-            type="password"
-            placeholder="Минимум 8 символов"
-          />
+          <Input {...register("password")} id="password" type="password" />
           <p>{errors.password?.message}</p>
           <div className="flex gap-1">
-            <div className="h-1 flex-1 rounded-full bg-primary" />
             <div className="h-1 flex-1 rounded-full bg-primary" />
             <div className="h-1 flex-1 rounded-full bg-chart-2" />
             <div className="h-1 flex-1 rounded-full bg-muted" />
