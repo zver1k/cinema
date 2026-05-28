@@ -15,6 +15,8 @@ import { useRouter } from "next/navigation";
 import { signIn } from "@/lib/auth-client";
 import { toast } from "sonner";
 import z from "zod";
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 const loginSchema = z.object({
   email: z.email("Неверный Email или пароль"),
@@ -22,6 +24,7 @@ const loginSchema = z.object({
 });
 
 function LoginForm() {
+  const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
@@ -55,7 +58,21 @@ function LoginForm() {
 
         <Field>
           <FieldLabel htmlFor="password">Пароль</FieldLabel>
-          <Input {...register("password")} id="password" type="password" />
+          <div className="relative">
+            <Input
+              className="pr-10"
+              {...register("password")}
+              id="password"
+              type={showPassword ? "text" : "password"}
+            />
+            <button
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-primary"
+              type="button"
+            >
+              {showPassword ? <EyeOff /> : <Eye />}
+            </button>
+          </div>
           <p className="text-sm text-red-500">{errors.password?.message}</p>
           <div className="flex items-center justify-between gap-3">
             <FieldDescription>Минимум 8 символов</FieldDescription>

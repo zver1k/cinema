@@ -16,6 +16,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signUp } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 
 const registerSchema = z.object({
   name: z
@@ -29,14 +31,25 @@ const registerSchema = z.object({
   email: z.email("Неверный адрес электронной почты"),
 });
 
+function strengthPassword(password: string): number {
+  if (password.length === 0) return 0;
+  else if (password.length < 8) return 1;
+  else if (/[0-9]/.test(password) && /[^a-zA-Z0-9]/.test(password)) return 3;
+  return 2;
+}
+
 function RegisterForm() {
+  const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(registerSchema),
   });
+  const password = watch("password") ?? "";
+  const strength = strengthPassword(password);
   const router = useRouter();
   const onSubmit = async (formData: z.infer<typeof registerSchema>) => {
     const { data, error } = await signUp.email({
@@ -70,12 +83,32 @@ function RegisterForm() {
 
         <Field>
           <FieldLabel htmlFor="password">Пароль</FieldLabel>
-          <Input {...register("password")} id="password" type="password" />
+          <div className="relative">
+            <Input
+              className="pr-10"
+              {...register("password")}
+              id="password"
+              type={showPassword ? "text" : "password"}
+            />
+            <button
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-primary"
+              type="button"
+            >
+              {showPassword ? <EyeOff /> : <Eye />}
+            </button>
+          </div>
           <p className="text-sm text-red-500">{errors.password?.message}</p>
           <div className="flex gap-1">
-            <div className="h-1 flex-1 rounded-full bg-primary" />
-            <div className="h-1 flex-1 rounded-full bg-chart-2" />
-            <div className="h-1 flex-1 rounded-full bg-muted" />
+            <div
+              className={`h-1 flex-1 rounded-full ${strength >= 1 ? "bg-red-500" : "bg-muted"}`}
+            />
+            <div
+              className={`h-1 flex-1 rounded-full ${strength >= 2 ? "bg-yellow-500" : "bg-muted"}`}
+            />
+            <div
+              className={`h-1 flex-1 rounded-full ${strength >= 3 ? "bg-green-500" : "bg-muted"}`}
+            />
           </div>
         </Field>
 

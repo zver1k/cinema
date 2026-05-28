@@ -14,12 +14,15 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { z } from "zod";
 import { resetPassword } from "@/lib/auth-client";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 
 const passwordSchema = z.object({
   password: z.string().min(8, "Минимум 8 символов"),
 });
 
 function ResetPasswordForm({ token }: { token?: string }) {
+  const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
@@ -46,7 +49,20 @@ function ResetPasswordForm({ token }: { token?: string }) {
       <FieldGroup className="gap-4">
         <Field>
           <FieldLabel htmlFor="password">Пароль</FieldLabel>
-          <Input {...register("password")} id="password" type="password" />
+          <div className="relative">
+            <Input
+              {...register("password")}
+              id="password"
+              type={showPassword ? "text" : "password"}
+            />
+            <button
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-primary"
+              type="button"
+            >
+              {showPassword ? <EyeOff /> : <Eye />}
+            </button>
+          </div>
           <p className="text-sm text-red-500">{errors.password?.message}</p>
           <div className="flex items-center justify-between gap-3">
             <FieldDescription>Минимум 8 символов</FieldDescription>
