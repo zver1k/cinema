@@ -26,14 +26,14 @@ const registerSchema = z.object({
     .string()
     .min(8, "Пароль должен быть более 8 символов")
     .max(60, "Никнейм должен быть не более 60 символов"),
-  email: z.email(),
+  email: z.email("Неверный адрес электронной почты"),
 });
 
 function RegisterForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(registerSchema),
   });
@@ -59,19 +59,19 @@ function RegisterForm() {
           <FieldLabel htmlFor="name">Никнейм</FieldLabel>
           <Input {...register("name")} id="name" type="text" />
           <FieldDescription>3-20 символов, латиница и цифры</FieldDescription>
-          <p>{errors.name?.message}</p>
+          <p className="text-sm text-red-500">{errors.name?.message}</p>
         </Field>
 
         <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
           <Input {...register("email")} id="email" type="email" />
-          <p>{errors.email?.message}</p>
+          <p className="text-sm text-red-500">{errors.email?.message}</p>
         </Field>
 
         <Field>
           <FieldLabel htmlFor="password">Пароль</FieldLabel>
           <Input {...register("password")} id="password" type="password" />
-          <p>{errors.password?.message}</p>
+          <p className="text-sm text-red-500">{errors.password?.message}</p>
           <div className="flex gap-1">
             <div className="h-1 flex-1 rounded-full bg-primary" />
             <div className="h-1 flex-1 rounded-full bg-chart-2" />
@@ -98,7 +98,12 @@ function RegisterForm() {
           </FieldContent>
         </Field>
 
-        <Button type="submit" size="lg" className="mt-1 w-full">
+        <Button
+          type="submit"
+          size="lg"
+          className="mt-1 w-full"
+          disabled={isSubmitting}
+        >
           Создать аккаунт
         </Button>
       </FieldGroup>
