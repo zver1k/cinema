@@ -29,6 +29,7 @@ const registerSchema = z.object({
     .min(8, "Пароль должен быть более 8 символов")
     .max(60, "Никнейм должен быть не более 60 символов"),
   email: z.email("Неверный адрес электронной почты"),
+  terms: z.literal(true, { error: "Необходимо принять условия" }),
 });
 
 function strengthPassword(password: string): number {
@@ -114,9 +115,9 @@ function RegisterForm() {
 
         <Field orientation="horizontal" className="items-start gap-3">
           <input
+            {...register("terms")}
             id="terms"
             type="checkbox"
-            defaultChecked
             className="mt-0.5 size-4 rounded border-border accent-primary"
           />
 
@@ -130,7 +131,7 @@ function RegisterForm() {
             </Label>
           </FieldContent>
         </Field>
-
+        <p className="text-sm text-red-500">{errors.terms?.message}</p>
         <Button
           type="submit"
           size="lg"
