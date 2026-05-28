@@ -17,13 +17,16 @@ function UserMenu() {
       {session ? (
         <>
           <Avatar>
-            <AvatarImage src={session?.user.image} alt={session?.user.name} />
+            <AvatarImage
+              src={session.user.image ?? undefined}
+              alt={session.user.name}
+            />
             <AvatarFallback>
               {session.user.name.toLocaleUpperCase().slice(0, 2)}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col items-center">
-            <span className="font-bold">{session?.user.name}</span>
+            <span className="font-bold">{session.user.name}</span>
             <Button size="xs" variant="secondary" onClick={() => signOut()}>
               Выйти
             </Button>
