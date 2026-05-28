@@ -28,7 +28,6 @@ async function StreamChips({ id }: { id: string }) {
               </div>
               <div>
                 <div className="text-[14px] font-medium">{s.platform}</div>
-                <div className="ml-1 text-[12px]">по подписке</div>
               </div>
             </Link>
           );
