@@ -9,18 +9,20 @@ import {
   ListFilter,
   LockKeyhole,
   LogOut,
-  Mail,
   Pencil,
   User,
   type LucideIcon,
 } from "lucide-react";
 
-import { Avatar, AvatarFallback } from "@/shared/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { cn } from "@/shared/lib/utils";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { updateProfile } from "@/app/(main)/profile/actions";
 
 type ProfileTab = "favorites" | "watched" | "watchlist" | "settings";
 
@@ -38,6 +40,8 @@ export default async function ProfilePage({
 }: {
   searchParams: Promise<{ tab?: string }>;
 }) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) return null;
   const { tab } = await searchParams;
   const activeTab = tabSet.has(tab as ProfileTab)
     ? (tab as ProfileTab)
@@ -45,7 +49,11 @@ export default async function ProfilePage({
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-1 py-2 sm:px-3 lg:px-6">
-      <ProfileHeader />
+      <ProfileHeader
+        name={session.user.name}
+        email={session.user.email}
+        image={session.user.image ?? null}
+      />
       <ProfileTabs activeTab={activeTab} />
 
       {activeTab === "favorites" && (
@@ -63,12 +71,22 @@ export default async function ProfilePage({
           description="Здесь будет очередь фильмов и сериалов на потом."
         />
       )}
-      {activeTab === "settings" && <ProfileSettings />}
+      {activeTab === "settings" && (
+        <ProfileSettings name={session.user.name} email={session.user.email} />
+      )}
     </div>
   );
 }
 
-function ProfileHeader() {
+function ProfileHeader({
+  name,
+  email,
+  image,
+}: {
+  name: string;
+  email: string;
+  image: string | null;
+}) {
   const stats = [
     { label: "Просмотрено", icon: Eye },
     { label: "В избранном", icon: Heart },
@@ -80,16 +98,17 @@ function ProfileHeader() {
       <div className="flex flex-col gap-5 lg:flex-row lg:items-center">
         <div className="flex min-w-0 flex-1 items-center gap-4">
           <Avatar className="size-18 text-xl sm:size-22" size="lg">
+            <AvatarImage src={image || undefined} alt={name} />
             <AvatarFallback className="bg-primary text-lg font-semibold text-primary-foreground sm:text-2xl">
-              U
+              {name.toLocaleUpperCase().slice(0, 2)}
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0">
             <h1 className="truncate text-3xl font-bold tracking-tight sm:text-5xl">
-              Профиль
+              {name}
             </h1>
             <p className="mt-2 text-sm text-muted-foreground sm:text-base">
-              Данные пользователя можно подключить здесь позже.
+              {email}
             </p>
           </div>
         </div>
@@ -222,90 +241,80 @@ function WatchedSkeleton() {
   );
 }
 
-function ProfileSettings() {
+function ProfileSettings({ name, email }: { name: string; email: string }) {
   return (
-    <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
-      <div className="flex flex-col gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-xl">
-              <User size={18} />
-              Аккаунт
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-4 sm:grid-cols-2">
-            <Field label="Имя" placeholder="Имя пользователя" />
-            <Field label="Email" placeholder="email@example.com" type="email" />
-            <Field label="Никнейм" placeholder="@username" />
-            <Field label="Город" placeholder="Город" />
-          </CardContent>
-        </Card>
+    <form action={updateProfile}>
+      <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="flex flex-col gap-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <User size={18} />
+                Аккаунт
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-2">
+                <Label>Никнейм</Label>
+                <Input id="name" name="name" type="text" defaultValue={name} />
+              </div>
+              <div className="grid gap-2">
+                <Label>Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  defaultValue={email}
+                />
+              </div>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-xl">
-              <Bell size={18} />
-              Уведомления
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-3">
-            <SettingsToggle label="Премьеры в подборках" />
-            <SettingsToggle label="Новые оценки у друзей" />
-            <SettingsToggle label="Еженедельная рассылка" />
-          </CardContent>
-        </Card>
-      </div>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <Bell size={18} />
+                Уведомления
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-3">
+              <SettingsToggle label="Премьеры в подборках" />
+              <SettingsToggle label="Новые оценки у друзей" />
+              <SettingsToggle label="Еженедельная рассылка" />
+            </CardContent>
+          </Card>
+        </div>
 
-      <div className="flex flex-col gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-xl">
-              <LockKeyhole size={18} />
-              Приватность
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-3">
-            <SettingsToggle label="Показывать избранное" />
-            <SettingsToggle label="Показывать оценки" />
-            <SettingsToggle label="Скрыть просмотренные" />
-          </CardContent>
-        </Card>
+        <div className="flex flex-col gap-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <LockKeyhole size={18} />
+                Приватность
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-3">
+              <SettingsToggle label="Показывать избранное" />
+              <SettingsToggle label="Показывать оценки" />
+              <SettingsToggle label="Скрыть просмотренные" />
+            </CardContent>
+          </Card>
 
-        <Card className="gap-4">
-          <CardContent className="flex flex-col gap-3 pt-6">
-            <Button>
-              <Check size={16} />
-              Сохранить изменения
-            </Button>
-            <Button variant="outline">
-              <Mail size={16} />
-              Сменить почту
-            </Button>
-            <Button variant="destructive">
-              <LogOut size={16} />
-              Выйти из аккаунта
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    </section>
-  );
-}
-
-function Field({
-  label,
-  placeholder,
-  type = "text",
-}: {
-  label: string;
-  placeholder: string;
-  type?: string;
-}) {
-  return (
-    <div className="grid gap-2">
-      <Label>{label}</Label>
-      <Input placeholder={placeholder} type={type} />
-    </div>
+          <Card className="gap-4">
+            <CardContent className="flex flex-col gap-3 pt-6">
+              <Button type="submit">
+                <Check size={16} />
+                Сохранить изменения
+              </Button>
+              <Button variant="destructive">
+                <LogOut size={16} />
+                Выйти из аккаунта
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+    </form>
   );
 }
 
