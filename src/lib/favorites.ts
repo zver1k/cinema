@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
-import { getFilmsById } from "@/shared/api/films";
+import { getFilmByIdSafe } from "@/shared/api/films";
 
 export async function isFavorite(movieId: string) {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -21,7 +21,14 @@ export async function getFavoriteMovies() {
     where: { userId },
   });
   const list = await Promise.all(
-    listFavoriteMovies.map((fav) => getFilmsById(fav.movieId)),
+    listFavoriteMovies.map((fav) => getFilmByIdSafe(fav.movieId)),
   );
-  return list;
+  return list.filter((i) => i !== null);
+}
+
+export async function getFavoritesCount() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) return 0;
+  const userId = session.user.id;
+  return prisma.favorite.count({ where: { userId } });
 }

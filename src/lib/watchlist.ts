@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { WatchStatus } from "@/generated/prisma/enums";
-import { getFilmsById } from "@/shared/api/films";
+import { getFilmByIdSafe } from "@/shared/api/films";
 
 export async function getWatchStatus(
   movieId: string,
@@ -24,7 +24,14 @@ export async function getWatchListMovies({ status }: { status: WatchStatus }) {
     where: { userId, status },
   });
   const list = await Promise.all(
-    listWatchListMovies.map((fav) => getFilmsById(fav.movieId)),
+    listWatchListMovies.map((watch) => getFilmByIdSafe(watch.movieId)),
   );
-  return list;
+  return list.filter((i) => i !== null);
+}
+
+export async function getWatchListCount({ status }: { status: WatchStatus }) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) return 0;
+  const userId = session.user.id;
+  return prisma.watchlist.count({ where: { userId, status } });
 }

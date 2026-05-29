@@ -23,8 +23,8 @@ import { cn } from "@/shared/lib/utils";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { updateProfile } from "@/app/(main)/profile/actions";
-import { getFavoriteMovies } from "@/lib/favorites";
-import { getWatchListMovies } from "@/lib/watchlist";
+import { getFavoriteMovies, getFavoritesCount } from "@/lib/favorites";
+import { getWatchListCount, getWatchListMovies } from "@/lib/watchlist";
 import { WatchStatus } from "@/generated/prisma/enums";
 import { FilmDetail } from "@/shared/types/api.types";
 import MovieGrid from "@/shared/ui/movie-grid";
@@ -65,6 +65,11 @@ export default async function ProfilePage({
     default:
       break;
   }
+  const [favoritesCount, watchedCount, plannedCount] = await Promise.all([
+    getFavoritesCount(),
+    getWatchListCount({ status: WatchStatus.WATCHED }),
+    getWatchListCount({ status: WatchStatus.PLANNED }),
+  ]);
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-1 py-2 sm:px-3 lg:px-6">
@@ -72,6 +77,9 @@ export default async function ProfilePage({
         name={session.user.name}
         email={session.user.email}
         image={session.user.image ?? null}
+        favoritesCount={favoritesCount}
+        watchedCount={watchedCount}
+        plannedCount={plannedCount}
       />
       <ProfileTabs activeTab={activeTab} />
 
@@ -116,17 +124,17 @@ function ProfileHeader({
   name,
   email,
   image,
+  favoritesCount,
+  watchedCount,
+  plannedCount,
 }: {
   name: string;
   email: string;
   image: string | null;
+  favoritesCount: number;
+  watchedCount: number;
+  plannedCount: number;
 }) {
-  const stats = [
-    { label: "Просмотрено", icon: Eye },
-    { label: "В избранном", icon: Heart },
-    { label: "В планах", icon: Bookmark },
-  ];
-
   return (
     <section className="rounded-4xl bg-muted/60 p-4 ring-1 ring-foreground/5 sm:p-6">
       <div className="flex flex-col gap-5 lg:flex-row lg:items-center">
@@ -153,24 +161,27 @@ function ProfileHeader({
       </div>
 
       <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {stats.map((stat) => {
-          const Icon = stat.icon;
-
-          return (
-            <div
-              className="rounded-3xl bg-card/80 p-4 ring-1 ring-foreground/5"
-              key={stat.label}
-            >
-              <div className="mb-3 flex size-9 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <Icon size={18} />
-              </div>
-              <div className="text-3xl font-bold">0</div>
-              <div className="mt-1 text-sm text-muted-foreground">
-                {stat.label}
-              </div>
-            </div>
-          );
-        })}
+        <div className="rounded-3xl bg-card/80 p-4 ring-1 ring-foreground/5">
+          <div className="mb-3 flex size-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <Eye size={18} />
+          </div>
+          <div className="text-3xl font-bold">{watchedCount}</div>
+          <div className="mt-1 text-sm text-muted-foreground">Просмотрено</div>
+        </div>
+        <div className="rounded-3xl bg-card/80 p-4 ring-1 ring-foreground/5">
+          <div className="mb-3 flex size-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <Heart size={18} />
+          </div>
+          <div className="text-3xl font-bold">{favoritesCount}</div>
+          <div className="mt-1 text-sm text-muted-foreground">В избранном</div>
+        </div>
+        <div className="rounded-3xl bg-card/80 p-4 ring-1 ring-foreground/5">
+          <div className="mb-3 flex size-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <Bookmark size={18} />
+          </div>
+          <div className="text-3xl font-bold">{plannedCount}</div>
+          <div className="mt-1 text-sm text-muted-foreground">В планах</div>
+        </div>
       </div>
     </section>
   );
