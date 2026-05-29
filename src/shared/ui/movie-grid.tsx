@@ -10,7 +10,7 @@ function MovieGrid({ films }: { films: FilmDetail[] }) {
       {films.map((film: FilmDetail) => {
         return (
           <Link key={film.kinopoiskId} href={`/movies/${film.kinopoiskId}`}>
-            <Card className="relative w-full pt-0 overflow-hidden transition hover:scale-103">
+            <Card className="relative w-full py-0 overflow-hidden transition hover:scale-103">
               <div className="relative aspect-2/3 w-full overflow-hidden">
                 <Image
                   src={film.posterUrl}
