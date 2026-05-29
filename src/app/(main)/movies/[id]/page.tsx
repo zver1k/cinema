@@ -1,5 +1,5 @@
 import { getFilmsById } from "@/shared/api/films";
-import { Bookmark, Heart, Play } from "lucide-react";
+import { Bookmark, Heart } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
 import BackButton from "@/shared/ui/back-button";
@@ -11,6 +11,7 @@ import { getCastById } from "@/shared/api/cast";
 import SimilarSection from "@/widgets/SimilarSection";
 import Poster from "@/shared/ui/poster";
 import { isFavorite } from "@/lib/favorites";
+import { toggleFavorite } from "@/app/(main)/movies/[id]/actions";
 
 export default async function MoviePage({
   params,
@@ -34,13 +35,12 @@ export default async function MoviePage({
           <div>
             <Poster movie={movie} />
             <div className="mt-4.5 flex flex-col gap-2.5">
-              <Button>
-                <Play size={16} /> Смотреть
-              </Button>
-              <Button>
-                <Heart size={16} />
-                {isFav ? "В избранном" : "В избранное"}
-              </Button>
+              <form className="contents" action={toggleFavorite.bind(null, id)}>
+                <Button variant={isFav ? "default" : "outline"}>
+                  <Heart className={isFav ? "fill-red-400" : ""} size={16} />
+                  {isFav ? "В избранном" : "В избранное"}
+                </Button>
+              </form>
               <Button>
                 <Bookmark size={16} />
                 {inWatch ? "В списке" : "Хочу посмотреть"}

@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 
 export async function toggleFavorite(movieId: string) {
   const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) return null;
+  if (!session) return;
   const userId = session.user.id;
   const existing = await prisma.favorite.findUnique({
     where: { userId_movieId: { userId, movieId } },
