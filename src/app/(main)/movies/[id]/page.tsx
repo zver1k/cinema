@@ -10,6 +10,7 @@ import StreamChips from "@/app/(main)/movies/[id]/_components/stream-chips";
 import { getCastById } from "@/shared/api/cast";
 import SimilarSection from "@/widgets/SimilarSection";
 import Poster from "@/shared/ui/poster";
+import { isFavorite } from "@/lib/favorites";
 
 export default async function MoviePage({
   params,
@@ -21,7 +22,7 @@ export default async function MoviePage({
   const director = await getCastById(id);
   const directorName = director.find((c) => c.professionKey === "DIRECTOR");
 
-  const inFav = true;
+  const isFav = await isFavorite(id);
   const inWatch = true;
   const rating = movie.ratingKinopoisk;
 
@@ -38,7 +39,7 @@ export default async function MoviePage({
               </Button>
               <Button>
                 <Heart size={16} />
-                {inFav ? "В избранном" : "В избранное"}
+                {isFav ? "В избранном" : "В избранное"}
               </Button>
               <Button>
                 <Bookmark size={16} />
