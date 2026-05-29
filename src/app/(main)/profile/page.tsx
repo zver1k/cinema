@@ -23,6 +23,11 @@ import { cn } from "@/shared/lib/utils";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { updateProfile } from "@/app/(main)/profile/actions";
+import { getFavoriteMovies } from "@/lib/favorites";
+import { getWatchListMovies } from "@/lib/watchlist";
+import { WatchStatus } from "@/generated/prisma/enums";
+import { FilmDetail } from "@/shared/types/api.types";
+import MovieGrid from "@/shared/ui/movie-grid";
 
 type ProfileTab = "favorites" | "watched" | "watchlist" | "settings";
 
@@ -46,6 +51,20 @@ export default async function ProfilePage({
   const activeTab = tabSet.has(tab as ProfileTab)
     ? (tab as ProfileTab)
     : "favorites";
+  let films: FilmDetail[] = [];
+  switch (activeTab) {
+    case "favorites":
+      films = await getFavoriteMovies();
+      break;
+    case "watched":
+      films = await getWatchListMovies({ status: WatchStatus.WATCHED });
+      break;
+    case "watchlist":
+      films = await getWatchListMovies({ status: WatchStatus.PLANNED });
+      break;
+    default:
+      break;
+  }
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-1 py-2 sm:px-3 lg:px-6">
@@ -56,21 +75,36 @@ export default async function ProfilePage({
       />
       <ProfileTabs activeTab={activeTab} />
 
-      {activeTab === "favorites" && (
-        <EmptyMovieSection
-          icon={Heart}
-          title="В избранном пока пусто"
-          description="Здесь появятся фильмы, которые пользователь добавит в избранное."
-        />
-      )}
-      {activeTab === "watched" && <WatchedSkeleton />}
-      {activeTab === "watchlist" && (
-        <EmptyMovieSection
-          icon={Bookmark}
-          title="Список «хочу посмотреть» пуст"
-          description="Здесь будет очередь фильмов и сериалов на потом."
-        />
-      )}
+      {activeTab === "favorites" &&
+        (films.length > 0 ? (
+          <MovieGrid films={films} />
+        ) : (
+          <EmptyMovieSection
+            icon={Heart}
+            title="В избранном пока пусто"
+            description="Здесь появятся фильмы, которые пользователь добавит в избранное."
+          />
+        ))}
+      {activeTab === "watched" &&
+        (films.length > 0 ? (
+          <MovieGrid films={films} />
+        ) : (
+          <EmptyMovieSection
+            icon={Eye}
+            title="Просмотренных пока нет"
+            description="Здесь будет история просмотренных фильмов."
+          />
+        ))}
+      {activeTab === "watchlist" &&
+        (films.length > 0 ? (
+          <MovieGrid films={films} />
+        ) : (
+          <EmptyMovieSection
+            icon={Bookmark}
+            title="Список «хочу посмотреть» пуст"
+            description="Здесь будет очередь фильмов и сериалов на потом."
+          />
+        ))}
       {activeTab === "settings" && (
         <ProfileSettings name={session.user.name} email={session.user.email} />
       )}
@@ -208,36 +242,6 @@ function MovieToolbar() {
         <Button variant="outline">Сортировка</Button>
       </div>
     </div>
-  );
-}
-
-function WatchedSkeleton() {
-  const facts = [
-    "За этот год",
-    "Любимый жанр",
-    "Часов в кино",
-    "Средняя оценка",
-  ];
-
-  return (
-    <section className="flex flex-col gap-5">
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {facts.map((fact) => (
-          <Card size="sm" className="gap-2 p-4" key={fact}>
-            <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              {fact}
-            </span>
-            <div className="text-2xl font-bold">0</div>
-          </Card>
-        ))}
-      </div>
-
-      <EmptyMovieSection
-        icon={Eye}
-        title="Просмотренных пока нет"
-        description="Здесь будет история просмотренных фильмов."
-      />
-    </section>
   );
 }
 
