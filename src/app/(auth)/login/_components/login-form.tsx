@@ -11,7 +11,7 @@ import { Button } from "@/shared/ui/button";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "@/lib/auth-client";
 import { toast } from "sonner";
 import z from "zod";
@@ -34,6 +34,8 @@ function LoginForm() {
     resolver: zodResolver(loginSchema),
   });
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect");
   const onSubmit = async (formData: z.infer<typeof loginSchema>) => {
     const { data, error } = await signIn.email({
       email: formData.email,
@@ -44,7 +46,7 @@ function LoginForm() {
     }
     if (data) {
       toast("Вы успешно авторизовались!");
-      router.push("/");
+      router.push(redirect || "/");
     }
   };
   return (
