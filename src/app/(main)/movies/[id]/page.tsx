@@ -1,5 +1,5 @@
 import { getFilmsById } from "@/shared/api/films";
-import { Bookmark, Heart } from "lucide-react";
+import { Bookmark, Eye, Heart } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
 import BackButton from "@/shared/ui/back-button";
@@ -11,7 +11,12 @@ import { getCastById } from "@/shared/api/cast";
 import SimilarSection from "@/widgets/SimilarSection";
 import Poster from "@/shared/ui/poster";
 import { isFavorite } from "@/lib/favorites";
-import { toggleFavorite } from "@/app/(main)/movies/[id]/actions";
+import {
+  setWatchStatus,
+  toggleFavorite,
+} from "@/app/(main)/movies/[id]/actions";
+import { getWatchStatus } from "@/lib/watchlist";
+import { WatchStatus } from "@/generated/prisma/enums";
 
 export default async function MoviePage({
   params,
@@ -24,7 +29,7 @@ export default async function MoviePage({
   const directorName = director.find((c) => c.professionKey === "DIRECTOR");
 
   const isFav = await isFavorite(id);
-  const inWatch = true;
+  const inWatch = await getWatchStatus(id);
   const rating = movie.ratingKinopoisk;
 
   return (
@@ -41,10 +46,46 @@ export default async function MoviePage({
                   {isFav ? "В избранном" : "В избранное"}
                 </Button>
               </form>
-              <Button>
-                <Bookmark size={16} />
-                {inWatch ? "В списке" : "Хочу посмотреть"}
-              </Button>
+              <form
+                className="contents"
+                action={setWatchStatus.bind(null, id, WatchStatus.PLANNED)}
+              >
+                <Button
+                  variant={
+                    inWatch === WatchStatus.PLANNED ? "default" : "outline"
+                  }
+                >
+                  <Bookmark
+                    className={
+                      inWatch === WatchStatus.PLANNED ? "fill-red-400" : ""
+                    }
+                    size={16}
+                  />
+                  {inWatch === WatchStatus.PLANNED
+                    ? "В планах"
+                    : "Хочу посмотреть"}
+                </Button>
+              </form>
+              <form
+                className="contents"
+                action={setWatchStatus.bind(null, id, WatchStatus.WATCHED)}
+              >
+                <Button
+                  variant={
+                    inWatch === WatchStatus.WATCHED ? "default" : "outline"
+                  }
+                >
+                  <Eye
+                    className={
+                      inWatch === WatchStatus.WATCHED ? "fill-red-400" : ""
+                    }
+                    size={16}
+                  />
+                  {inWatch === WatchStatus.WATCHED
+                    ? "Просмотрено"
+                    : "Посмотрел"}
+                </Button>
+              </form>
             </div>
             <div className="mt-4">Блок фактов</div>
           </div>
