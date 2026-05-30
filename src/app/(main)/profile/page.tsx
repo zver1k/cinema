@@ -27,9 +27,9 @@ import { getFavoriteMovies, getFavoritesCount } from "@/lib/favorites";
 import { getWatchListCount, getWatchListMovies } from "@/lib/watchlist";
 import { WatchStatus } from "@/generated/prisma/enums";
 import { FilmDetail } from "@/shared/types/api.types";
+import { ProfileTab } from "@/shared/types/profile.types";
 import MovieGrid from "@/shared/ui/movie-grid";
-
-type ProfileTab = "favorites" | "watched" | "watchlist" | "settings";
+import { SortKey } from "@/shared/types/search.types";
 
 const tabs: Array<{ id: ProfileTab; label: string }> = [
   { id: "favorites", label: "Избранное" },
@@ -38,19 +38,27 @@ const tabs: Array<{ id: ProfileTab; label: string }> = [
   { id: "settings", label: "Настройки" },
 ];
 
+const sorts: Array<{ id: SortKey; label: string }> = [
+  { id: "name", label: "По имени" },
+  { id: "year", label: "По году" },
+  { id: "rating", label: "По рейтингу" },
+];
+
 const tabSet = new Set<ProfileTab>(tabs.map((tab) => tab.id));
+const sortSet = new Set<SortKey>(sorts.map((s) => s.id));
 
 export default async function ProfilePage({
   searchParams,
 }: {
-  searchParams: Promise<{ tab?: string }>;
+  searchParams: Promise<{ tab?: string; sort?: string }>;
 }) {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return null;
-  const { tab } = await searchParams;
+  const { tab, sort } = await searchParams;
   const activeTab = tabSet.has(tab as ProfileTab)
     ? (tab as ProfileTab)
     : "favorites";
+  const activeSort = sortSet.has(sort as SortKey) ? (sort as SortKey) : "name";
   let films: FilmDetail[] = [];
   switch (activeTab) {
     case "favorites":
@@ -65,6 +73,14 @@ export default async function ProfilePage({
     default:
       break;
   }
+  const comparators: Record<SortKey, (a: FilmDetail, b: FilmDetail) => number> =
+    {
+      name: (a, b) => (a.nameRu ?? "").localeCompare(b.nameRu ?? "", "ru"),
+      year: (a, b) => (b.year ?? 0) - (a.year ?? 0),
+      rating: (a, b) => (b.ratingKinopoisk ?? 0) - (a.ratingKinopoisk ?? 0),
+    };
+  films.sort(comparators[activeSort]);
+
   const [favoritesCount, watchedCount, plannedCount] = await Promise.all([
     getFavoritesCount(),
     getWatchListCount({ status: WatchStatus.WATCHED }),
@@ -82,6 +98,8 @@ export default async function ProfilePage({
         plannedCount={plannedCount}
       />
       <ProfileTabs activeTab={activeTab} />
+
+      {activeTab !== "settings" && <MovieToolbar />}
 
       {activeTab === "favorites" &&
         (films.length > 0 ? (
@@ -224,7 +242,6 @@ function EmptyMovieSection({
 }) {
   return (
     <section className="flex flex-col gap-4">
-      <MovieToolbar />
       <Card className="items-center justify-center p-10 text-center">
         <div className="mb-2 flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
           <Icon size={22} />
