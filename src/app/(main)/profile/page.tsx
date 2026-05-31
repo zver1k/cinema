@@ -73,6 +73,26 @@ export default async function ProfilePage({
     default:
       break;
   }
+
+  const emptyStates = {
+    favorites: {
+      icon: Heart,
+      title: "В избранном пока пусто",
+      description:
+        "Здесь появятся фильмы, которые пользователь добавит в избранное.",
+    },
+    watched: {
+      icon: Eye,
+      title: "Просмотренных пока нет",
+      description: "Здесь будет история просмотренных фильмов.",
+    },
+    watchlist: {
+      icon: Bookmark,
+      title: "Список «хочу посмотреть» пуст",
+      description: "Здесь будет очередь фильмов и сериалов на потом.",
+    },
+  };
+
   const comparators: Record<SortKey, (a: FilmDetail, b: FilmDetail) => number> =
     {
       name: (a, b) => (a.nameRu ?? "").localeCompare(b.nameRu ?? "", "ru"),
@@ -100,39 +120,16 @@ export default async function ProfilePage({
       <ProfileTabs activeTab={activeTab} />
 
       {activeTab !== "settings" && (
-        <MovieToolbar activeSort={activeSort} activeTab={activeTab} />
+        <>
+          <MovieToolbar activeSort={activeSort} activeTab={activeTab} />
+          {films.length > 0 ? (
+            <MovieGrid films={films} />
+          ) : (
+            <EmptyMovieSection {...emptyStates[activeTab]} />
+          )}
+        </>
       )}
 
-      {activeTab === "favorites" &&
-        (films.length > 0 ? (
-          <MovieGrid films={films} />
-        ) : (
-          <EmptyMovieSection
-            icon={Heart}
-            title="В избранном пока пусто"
-            description="Здесь появятся фильмы, которые пользователь добавит в избранное."
-          />
-        ))}
-      {activeTab === "watched" &&
-        (films.length > 0 ? (
-          <MovieGrid films={films} />
-        ) : (
-          <EmptyMovieSection
-            icon={Eye}
-            title="Просмотренных пока нет"
-            description="Здесь будет история просмотренных фильмов."
-          />
-        ))}
-      {activeTab === "watchlist" &&
-        (films.length > 0 ? (
-          <MovieGrid films={films} />
-        ) : (
-          <EmptyMovieSection
-            icon={Bookmark}
-            title="Список «хочу посмотреть» пуст"
-            description="Здесь будет очередь фильмов и сериалов на потом."
-          />
-        ))}
       {activeTab === "settings" && (
         <ProfileSettings name={session.user.name} email={session.user.email} />
       )}
