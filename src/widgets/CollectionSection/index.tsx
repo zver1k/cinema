@@ -1,6 +1,7 @@
 import { CollectionType } from "@/shared/types/api.types";
 import CollectionSwiper from "@/shared/ui/collection-swiper";
 import { getCollection } from "@/shared/api/collection";
+import { AuroraText } from "@/shared/ui/aurora-text";
 
 async function CollectionSection({
   type,
@@ -14,7 +15,12 @@ async function CollectionSection({
   const { items = [] } = await getCollection(type);
   return (
     <div className="w-full min-w-0 overflow-hidden">
-      <h2 className="text-4xl text-center m-2">{title}</h2>
+      <AuroraText
+        colors={["#9ca8ab", "#005f5a", "#022f2e", "#0092b8"]}
+        className="text-4xl m-2"
+      >
+        {title}
+      </AuroraText>
       <CollectionSwiper items={items} eagerFirstImage={eagerFirstImage} />
     </div>
   );
