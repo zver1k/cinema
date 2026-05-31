@@ -99,7 +99,9 @@ export default async function ProfilePage({
       />
       <ProfileTabs activeTab={activeTab} />
 
-      {activeTab !== "settings" && <MovieToolbar />}
+      {activeTab !== "settings" && (
+        <MovieToolbar activeSort={activeSort} activeTab={activeTab} />
+      )}
 
       {activeTab === "favorites" &&
         (films.length > 0 ? (
@@ -231,6 +233,34 @@ function ProfileTabs({ activeTab }: { activeTab: ProfileTab }) {
   );
 }
 
+function SortSelect({
+  activeTab,
+  activeSort,
+}: {
+  activeTab: ProfileTab;
+  activeSort: SortKey;
+}) {
+  return (
+    <div className="sm:ml-auto">
+      {sorts.map((sort) => (
+        <Button
+          asChild
+          className={cn(
+            "h-10 rounded-4xl px-4",
+            activeSort === sort.id && "shadow-sm",
+          )}
+          key={sort.id}
+          variant={activeSort === sort.id ? "secondary" : "ghost"}
+        >
+          <Link href={`/profile?tab=${activeTab}&sort=${sort.id}`}>
+            {sort.label}
+          </Link>
+        </Button>
+      ))}
+    </div>
+  );
+}
+
 function EmptyMovieSection({
   icon: Icon,
   title,
@@ -253,7 +283,13 @@ function EmptyMovieSection({
   );
 }
 
-function MovieToolbar() {
+function MovieToolbar({
+  activeTab,
+  activeSort,
+}: {
+  activeTab: ProfileTab;
+  activeSort: SortKey;
+}) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
       <div className="flex gap-2">
@@ -266,9 +302,7 @@ function MovieToolbar() {
           Список
         </Button>
       </div>
-      <div className="sm:ml-auto">
-        <Button variant="outline">Сортировка</Button>
-      </div>
+      <SortSelect activeTab={activeTab} activeSort={activeSort} />
     </div>
   );
 }
