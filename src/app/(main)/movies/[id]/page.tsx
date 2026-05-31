@@ -17,6 +17,8 @@ import {
 } from "@/app/(main)/movies/[id]/actions";
 import { getWatchStatus } from "@/lib/watchlist";
 import { WatchStatus } from "@/generated/prisma/enums";
+import BoxOffice from "@/app/(main)/movies/[id]/_components/box-office";
+import { getBoxOffice } from "@/shared/api/box-office";
 
 export default async function MoviePage({
   params,
@@ -26,6 +28,7 @@ export default async function MoviePage({
   const { id } = await params;
   const movie = await getFilmsById(id);
   const director = await getCastById(id);
+  const boxOffice = await getBoxOffice(id);
   const directorName = director.find((c) => c.professionKey === "DIRECTOR");
 
   const isFav = await isFavorite(id);
@@ -87,7 +90,7 @@ export default async function MoviePage({
                 </Button>
               </form>
             </div>
-            <div className="mt-4">Блок фактов</div>
+            <BoxOffice boxOffice={boxOffice} />
           </div>
           <div className="min-w-0 flex flex-col gap-2">
             <div className="flex gap-2">

@@ -103,7 +103,7 @@ export type StaffType =
   | "PRODUCER"
   | "ACTOR"
   | "VOICE_DIRECTOR"
-  | "UNKNOWN ";
+  | "UNKNOWN";
 
 export type Staff = {
   staffId: number;
@@ -171,7 +171,20 @@ export type SimilarFilm = {
   relationType: "SIMILAR";
 };
 
+export type BoxOfficeFilm = {
+  type: string;
+  amount: number;
+  currencyCode: string;
+  name: string;
+  symbol: string;
+};
+
 export type SimilarFilmResponse = {
   total: number;
   items: SimilarFilm[];
+};
+
+export type BoxOfficeResponse = {
+  total: number;
+  items: BoxOfficeFilm[];
 };
