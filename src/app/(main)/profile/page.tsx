@@ -4,14 +4,11 @@ import {
   Bookmark,
   Check,
   Eye,
-  Grid2X2,
   Heart,
-  ListFilter,
   LockKeyhole,
   LogOut,
   Pencil,
   User,
-  type LucideIcon,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";
@@ -28,8 +25,9 @@ import { getWatchListCount, getWatchListMovies } from "@/lib/watchlist";
 import { WatchStatus } from "@/generated/prisma/enums";
 import { FilmDetail } from "@/shared/types/api.types";
 import { ProfileTab } from "@/shared/types/profile.types";
-import MovieGrid from "@/shared/ui/movie-grid";
 import { SortKey } from "@/shared/types/search.types";
+import { sortSet } from "@/shared/constants/sorts";
+import ProfileMovies from "@/app/(main)/profile/_components/ProfileMovies";
 
 const tabs: Array<{ id: ProfileTab; label: string }> = [
   { id: "favorites", label: "Избранное" },
@@ -38,14 +36,7 @@ const tabs: Array<{ id: ProfileTab; label: string }> = [
   { id: "settings", label: "Настройки" },
 ];
 
-const sorts: Array<{ id: SortKey; label: string }> = [
-  { id: "name", label: "По имени" },
-  { id: "year", label: "По году" },
-  { id: "rating", label: "По рейтингу" },
-];
-
 const tabSet = new Set<ProfileTab>(tabs.map((tab) => tab.id));
-const sortSet = new Set<SortKey>(sorts.map((s) => s.id));
 
 export default async function ProfilePage({
   searchParams,
@@ -55,10 +46,10 @@ export default async function ProfilePage({
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return null;
   const { tab, sort } = await searchParams;
+  const activeSort = sortSet.has(sort as SortKey) ? (sort as SortKey) : "name";
   const activeTab = tabSet.has(tab as ProfileTab)
     ? (tab as ProfileTab)
     : "favorites";
-  const activeSort = sortSet.has(sort as SortKey) ? (sort as SortKey) : "name";
   let films: FilmDetail[] = [];
   switch (activeTab) {
     case "favorites":
@@ -73,25 +64,6 @@ export default async function ProfilePage({
     default:
       break;
   }
-
-  const emptyStates = {
-    favorites: {
-      icon: Heart,
-      title: "В избранном пока пусто",
-      description:
-        "Здесь появятся фильмы, которые пользователь добавит в избранное.",
-    },
-    watched: {
-      icon: Eye,
-      title: "Просмотренных пока нет",
-      description: "Здесь будет история просмотренных фильмов.",
-    },
-    watchlist: {
-      icon: Bookmark,
-      title: "Список «хочу посмотреть» пуст",
-      description: "Здесь будет очередь фильмов и сериалов на потом.",
-    },
-  };
 
   const comparators: Record<SortKey, (a: FilmDetail, b: FilmDetail) => number> =
     {
@@ -120,14 +92,11 @@ export default async function ProfilePage({
       <ProfileTabs activeTab={activeTab} />
 
       {activeTab !== "settings" && (
-        <>
-          <MovieToolbar activeSort={activeSort} activeTab={activeTab} />
-          {films.length > 0 ? (
-            <MovieGrid films={films} />
-          ) : (
-            <EmptyMovieSection {...emptyStates[activeTab]} />
-          )}
-        </>
+        <ProfileMovies
+          films={films}
+          activeTab={activeTab}
+          activeSort={activeSort}
+        />
       )}
 
       {activeTab === "settings" && (
@@ -227,80 +196,6 @@ function ProfileTabs({ activeTab }: { activeTab: ProfileTab }) {
         </Button>
       ))}
     </nav>
-  );
-}
-
-function SortSelect({
-  activeTab,
-  activeSort,
-}: {
-  activeTab: ProfileTab;
-  activeSort: SortKey;
-}) {
-  return (
-    <div className="sm:ml-auto">
-      {sorts.map((sort) => (
-        <Button
-          asChild
-          className={cn(
-            "h-10 rounded-4xl px-4",
-            activeSort === sort.id && "shadow-sm",
-          )}
-          key={sort.id}
-          variant={activeSort === sort.id ? "secondary" : "ghost"}
-        >
-          <Link href={`/profile?tab=${activeTab}&sort=${sort.id}`}>
-            {sort.label}
-          </Link>
-        </Button>
-      ))}
-    </div>
-  );
-}
-
-function EmptyMovieSection({
-  icon: Icon,
-  title,
-  description,
-}: {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-}) {
-  return (
-    <section className="flex flex-col gap-4">
-      <Card className="items-center justify-center p-10 text-center">
-        <div className="mb-2 flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-          <Icon size={22} />
-        </div>
-        <h2 className="text-xl font-semibold">{title}</h2>
-        <p className="max-w-110 text-sm text-muted-foreground">{description}</p>
-      </Card>
-    </section>
-  );
-}
-
-function MovieToolbar({
-  activeTab,
-  activeSort,
-}: {
-  activeTab: ProfileTab;
-  activeSort: SortKey;
-}) {
-  return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-      <div className="flex gap-2">
-        <Button variant="secondary">
-          <Grid2X2 size={16} />
-          Сетка
-        </Button>
-        <Button variant="ghost">
-          <ListFilter size={16} />
-          Список
-        </Button>
-      </div>
-      <SortSelect activeTab={activeTab} activeSort={activeSort} />
-    </div>
   );
 }
 
