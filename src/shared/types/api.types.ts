@@ -179,6 +179,12 @@ export type BoxOfficeFilm = {
   symbol: string;
 };
 
+export type TFilmFacts = {
+  text: string;
+  type: "FACT" | "BLOOPER";
+  spoiler: boolean;
+};
+
 export type SimilarFilmResponse = {
   total: number;
   items: SimilarFilm[];
@@ -187,4 +193,9 @@ export type SimilarFilmResponse = {
 export type BoxOfficeResponse = {
   total: number;
   items: BoxOfficeFilm[];
+};
+
+export type FilmFactsResponse = {
+  total: number;
+  items: TFilmFacts[];
 };
