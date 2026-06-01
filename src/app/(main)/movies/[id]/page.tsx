@@ -1,6 +1,4 @@
 import { getFilmsById } from "@/shared/api/films";
-import { Bookmark, Eye, Heart } from "lucide-react";
-import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
 import BackButton from "@/shared/ui/back-button";
 import RatingBadge from "@/shared/ui/rating-badge";
@@ -11,16 +9,13 @@ import { getCastById } from "@/shared/api/cast";
 import SimilarSection from "@/widgets/SimilarSection";
 import Poster from "@/shared/ui/poster";
 import { isFavorite } from "@/lib/favorites";
-import {
-  setWatchStatus,
-  toggleFavorite,
-} from "@/app/(main)/movies/[id]/actions";
 import { getWatchStatus } from "@/lib/watchlist";
-import { WatchStatus } from "@/generated/prisma/enums";
 import BoxOffice from "@/app/(main)/movies/[id]/_components/box-office";
 import { getBoxOffice } from "@/shared/api/box-office";
 import { getFilmFacts } from "@/shared/api/facts";
 import FilmFacts from "@/app/(main)/movies/[id]/_components/film-facts";
+import FavoriteButton from "@/app/(main)/movies/[id]/_components/favorite-button";
+import WatchButtons from "@/app/(main)/movies/[id]/_components/watch-buttons";
 
 export default async function MoviePage({
   params,
@@ -46,52 +41,8 @@ export default async function MoviePage({
           <div>
             <Poster movie={movie} />
             <div className="mt-4.5 flex flex-col gap-2.5">
-              <form className="contents" action={toggleFavorite.bind(null, id)}>
-                <Button variant={isFav ? "default" : "outline"}>
-                  <Heart className={isFav ? "fill-red-400" : ""} size={16} />
-                  {isFav ? "В избранном" : "В избранное"}
-                </Button>
-              </form>
-              <form
-                className="contents"
-                action={setWatchStatus.bind(null, id, WatchStatus.PLANNED)}
-              >
-                <Button
-                  variant={
-                    inWatch === WatchStatus.PLANNED ? "default" : "outline"
-                  }
-                >
-                  <Bookmark
-                    className={
-                      inWatch === WatchStatus.PLANNED ? "fill-red-400" : ""
-                    }
-                    size={16}
-                  />
-                  {inWatch === WatchStatus.PLANNED
-                    ? "В планах"
-                    : "Хочу посмотреть"}
-                </Button>
-              </form>
-              <form
-                className="contents"
-                action={setWatchStatus.bind(null, id, WatchStatus.WATCHED)}
-              >
-                <Button
-                  variant={
-                    inWatch === WatchStatus.WATCHED ? "default" : "outline"
-                  }
-                >
-                  <Eye
-                    className={
-                      inWatch === WatchStatus.WATCHED ? "fill-red-400" : ""
-                    }
-                    size={16}
-                  />
-                  {inWatch === WatchStatus.WATCHED
-                    ? "Просмотрено"
-                    : "Посмотрел"}
-                </Button>
-              </form>
+              <FavoriteButton isFav={isFav} id={id} />
+              <WatchButtons id={id} inWatch={inWatch} />
             </div>
             <BoxOffice boxOffice={boxOffice} />
             <FilmFacts facts={facts} />
