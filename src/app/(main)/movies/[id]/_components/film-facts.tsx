@@ -5,7 +5,7 @@ import { Separator } from "@/shared/ui/separator";
 
 function FilmFacts({ facts }: { facts: TFilmFacts[] }) {
   if (facts.length === 0) return null;
-  const items = getRandomItems(facts, 2);
+  const items = getRandomItems(facts, 5);
   return (
     <div className="mt-4">
       <div className="mb-3 font-semibold">Факты и ляпы</div>
