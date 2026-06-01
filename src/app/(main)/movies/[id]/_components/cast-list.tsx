@@ -24,8 +24,8 @@ function CastList({ actors }: { actors: Staff[] }) {
         >
           {!isExpanded ? (
             <>
-              <ChevronDown size={16} className="mr-2" /> Показать еще (
-              {actors.length})
+              <ChevronDown size={16} className="mr-2" /> Показать ещё (
+              {actors.length - 10})
             </>
           ) : (
             <>
