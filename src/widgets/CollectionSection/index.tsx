@@ -16,8 +16,8 @@ async function CollectionSection({
   return (
     <div className="w-full min-w-0 overflow-hidden">
       <AuroraText
-        colors={["#9ca8ab", "#005f5a", "#022f2e", "#0092b8"]}
-        className="text-4xl m-2"
+        colors={["#9ca8ab", "#005f5a", "#0092b8"]}
+        className="text-4xl m-2 font-bold"
       >
         {title}
       </AuroraText>

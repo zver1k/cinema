@@ -24,6 +24,6 @@ export const sidebarItems = [
   {
     title: "Настройки",
     icon: Settings2,
-    href: "/settings",
+    href: "/profile?tab=settings",
   },
 ];
