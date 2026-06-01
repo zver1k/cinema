@@ -31,7 +31,7 @@ async function SidebarFooter() {
           >
             <Image
               src={film.posterUrlPreview}
-              alt={film.nameRu || film.nameEn || film.premiereRu}
+              alt={film.nameRu ?? film.nameEn ?? "Нет названия"}
               height={64}
               width={48}
               unoptimized
