@@ -70,6 +70,19 @@ export type Film = {
   posterUrlPreview: string;
 };
 
+export type MovieItem = {
+  kinopoiskId: number;
+  posterUrl: string;
+  nameRu: string | null;
+  nameEn: string | null;
+  nameOriginal: string | null;
+  ratingKinopoisk: number | null;
+  genres: { genre: string }[];
+  year: string | number | null;
+  filmLength?: number | null;
+  description?: string | null;
+};
+
 export type FilmResponse = {
   total: number;
   totalPages: number;

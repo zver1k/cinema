@@ -1,4 +1,4 @@
-import { FilmDetail } from "@/shared/types/api.types";
+import { MovieItem } from "@/shared/types/api.types";
 import Image from "next/image";
 import RatingBadge from "@/shared/ui/rating-badge";
 import { Card } from "@/shared/ui/card";
@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ViewMode } from "@/shared/types/search.types";
 import { Badge } from "@/shared/ui/badge";
 
-function MovieCard({ film }: { film: FilmDetail }) {
+function MovieCard({ film }: { film: MovieItem }) {
   return (
     <Link href={`/movies/${film.kinopoiskId}`}>
       <Card className="relative w-full py-0 overflow-hidden transition hover:scale-103">
@@ -30,7 +30,7 @@ function MovieCard({ film }: { film: FilmDetail }) {
   );
 }
 
-function MovieRow({ film }: { film: FilmDetail }) {
+function MovieRow({ film }: { film: MovieItem }) {
   return (
     <Link href={`/movies/${film.kinopoiskId}`}>
       <Card className="flex flex-row gap-4 p-6 transition hover:scale-103">
@@ -75,7 +75,7 @@ function MovieGrid({
   films,
   view = "grid",
 }: {
-  films: FilmDetail[];
+  films: MovieItem[];
   view: ViewMode;
 }) {
   return (
