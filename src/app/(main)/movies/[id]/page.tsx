@@ -54,7 +54,7 @@ export default async function MoviePage({
               })}
             </div>
             <h1 className="mb-1 text-[54px] font-bold leading-[1.02] tracking-tight">
-              {movie.nameRu}
+              {movie.nameRu ?? movie.nameEn ?? movie.nameOriginal}
             </h1>
             <div className="text-ring text-[18px] mb-6">
               {movie.nameOriginal} · {movie.year}
@@ -90,12 +90,14 @@ export default async function MoviePage({
                 {movie.slogan}
               </p>
             )}
-            <div className="mb-9">
-              <h3 className="mb-3.5 text-[18px] font-semibold">О сюжете</h3>
-              <p className="text-[15px] leading-[1.7] text-pretty">
-                {movie.description}
-              </p>
-            </div>
+            {movie.description && (
+              <div className="mb-9">
+                <h3 className="mb-3.5 text-[18px] font-semibold">О сюжете</h3>
+                <p className="text-[15px] leading-[1.7] text-pretty">
+                  {movie.description}
+                </p>
+              </div>
+            )}
             <StreamChips id={id} />
             <CastSection id={id} />
             <ReviewsSection id={id} />
