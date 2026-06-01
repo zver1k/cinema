@@ -1,23 +1,20 @@
 import { MovieItem } from "@/shared/types/api.types";
-import Image from "next/image";
 import RatingBadge from "@/shared/ui/rating-badge";
 import { Card } from "@/shared/ui/card";
 import Link from "next/link";
 import { ViewMode } from "@/shared/types/search.types";
 import { Badge } from "@/shared/ui/badge";
+import PosterImage from "@/shared/ui/poster-image";
 
 function MovieCard({ film }: { film: MovieItem }) {
   return (
     <Link href={`/movies/${film.kinopoiskId}`}>
       <Card className="relative w-full py-0 overflow-hidden transition hover:scale-103">
         <div className="relative aspect-2/3 w-full overflow-hidden">
-          <Image
+          <PosterImage
             src={film.posterUrl}
             alt={film.nameRu ?? film.nameEn ?? "Логотип"}
-            fill
             sizes="(max-width: 639px) calc(100vw), (max-width: 767px) calc((100vw - 10px) / 2), (max-width: 1023px) calc((100vw - 350px) / 4), calc((100vw - 370px) / 6)"
-            unoptimized
-            className="object-cover"
           />
           <div className="absolute top-2 left-2">
             {film.ratingKinopoisk && (
@@ -35,13 +32,10 @@ function MovieRow({ film }: { film: MovieItem }) {
     <Link href={`/movies/${film.kinopoiskId}`}>
       <Card className="flex flex-row gap-4 p-6 transition hover:scale-103">
         <div className="relative h-60 w-40 shrink-0 overflow-hidden rounded-xl">
-          <Image
+          <PosterImage
             src={film.posterUrl}
             alt={film.nameRu ?? film.nameEn ?? "Логотип"}
-            fill
             sizes="(max-width: 639px) calc(100vw), (max-width: 767px) calc((100vw - 10px) / 2), (max-width: 1023px) calc((100vw - 350px) / 4), calc((100vw - 370px) / 6)"
-            unoptimized
-            className="object-cover"
           />
           <div className="absolute top-2 left-2">
             {film.ratingKinopoisk && (
