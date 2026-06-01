@@ -67,6 +67,13 @@
 - `dangerouslySetInnerHTML={{ __html }}` — для рендера сырого HTML (React по умолчанию экранирует `{text}`); у такого элемента не может быть детей; контейнер — `<div>` (разрешает блочное).
 - Data-driven рендеринг: справочник-объект/массив (`emptyStates`, `sorts`, `typeLabels`) вместо копипаста разметки; `Record<...>` + `.map`.
 
+### Next.js: загрузка и стриминг (`loading.tsx`)
+- **`loading.tsx`** рядом с `page.tsx` — конвенция: Next САМ оборачивает страницу в `<Suspense fallback={<Loading/>}>`. Пока `async`-страница ждёт данные — виден фолбэк, потом контент подменяется (стриминг). Ручной `<Suspense>` писать не нужно.
+- Серверный компонент, БЕЗ пропсов, **default export**. Оборачивает `page.tsx`, но не `layout.tsx` того же сегмента.
+- **Скелетон повторяет сетку контента** (те же `grid-cols`, `gap`, `aspect-2/3`) — иначе вёрстка прыгнет при подмене.
+- N заглушек без данных: `[...Array(20)].map((_, i) => <Skeleton key={i} .../>)`. Готовый `Skeleton` = `animate-pulse rounded-xl bg-muted`.
+- Проверка стриминга в HTML: в одном ответе есть И фолбэк-скелетон, И реальные карточки. Увидеть глазами — троттлинг Slow 3G в DevTools.
+
 ### Next.js: URL как состояние (`searchParams`)
 - **`searchParams` — это `Promise`** (Next 16): `async function Page({ searchParams }: { searchParams: Promise<{ page?: string }> })` → `const { page } = await searchParams`. Причина: статику Next рендерит наперёд, а query известно только в момент запроса; `await` осознанно переводит кусок в динамический рендер. Так же устроен `params` для `[id]`.
 - **`params` ≠ `searchParams`**: `params` — сегменты пути (`[id]`), `searchParams` — query после `?`. У страницы без `[...]` сегмента `params` пустой.
@@ -99,5 +106,4 @@
 ## Дальше по плану (Трек A — «Лента фильмов»)
 - **Фильтр по жанрам** через `searchParams` (несколько URL-параметров вместе `?genre=&page=`); данные жанров — `getFilters()`.
 - **Поиск** с debounce (клиентский input ↔ URL, keyword-эндпоинт API).
-- **`loading.tsx` + Suspense** — скелетон, пока грузится список.
 - Бонус: динамический `generateMetadata` (заголовок/OG под фильм).
