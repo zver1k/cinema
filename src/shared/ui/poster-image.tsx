@@ -29,8 +29,9 @@ function PosterImage({
         className={`object-cover ${errorLoadingImage ? "hidden" : ""}`}
       />
       {errorLoadingImage && (
-        <div className="absolute flex items-center justify-center inset-0 bg-muted">
-          <ImageOff />
+        <div className="absolute flex flex-col gap-2 items-center justify-center inset-0 bg-muted">
+          <ImageOff size={32} />
+          <span>Нет постера</span>
         </div>
       )}
     </>
