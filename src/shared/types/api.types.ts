@@ -116,7 +116,11 @@ export type StaffType =
   | "PRODUCER"
   | "ACTOR"
   | "VOICE_DIRECTOR"
-  | "UNKNOWN";
+  | "UNKNOWN"
+  | "HIMSELF"
+  | "HERSELF"
+  | "HRONO_TITR_MALE"
+  | "HRONO_TITR_FEMALE";
 
 export type Staff = {
   staffId: number;

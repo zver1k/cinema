@@ -9,7 +9,7 @@ function Filmography({ films }: { films: PersonFilm[] }) {
     (acc, film) => {
       const key = film.professionKey;
       if (!acc[key]) acc[key] = [];
-      acc[key].push(film);
+      if (!acc[key].some((f) => f.filmId === film.filmId)) acc[key].push(film);
       return acc;
     },
     {} as Record<string, PersonFilm[]>,
@@ -17,10 +17,11 @@ function Filmography({ films }: { films: PersonFilm[] }) {
   const entries = Object.entries(grouped);
   return (
     <Tabs defaultValue={entries[0]?.[0]} className="w-full">
-      <TabsList>
+      <TabsList variant="line">
         {entries.map(([key, groupFilms]) => (
           <TabsTrigger key={key} value={key}>
-            {PERSON_ROLE_LABELS[key as StaffType]} ({groupFilms.length})
+            {PERSON_ROLE_LABELS[key as StaffType] ?? "Прочее"} (
+            {groupFilms.length})
           </TabsTrigger>
         ))}
       </TabsList>

@@ -25,4 +25,8 @@ export const PERSON_ROLE_LABELS: Record<StaffType, string> = {
   ACTOR: "Актер",
   VOICE_DIRECTOR: "Режиссер дубляжа",
   UNKNOWN: "Неизвестно",
+  HIMSELF: "Играет себя",
+  HERSELF: "Играет себя",
+  HRONO_TITR_MALE: "Титры",
+  HRONO_TITR_FEMALE: "Титры",
 };
