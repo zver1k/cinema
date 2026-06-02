@@ -1,4 +1,4 @@
-import { getFilmsById } from "@/shared/api/films";
+import { getFilmByIdSafe, getFilmsById } from "@/shared/api/films";
 import { Badge } from "@/shared/ui/badge";
 import BackButton from "@/shared/ui/back-button";
 import RatingBadge from "@/shared/ui/rating-badge";
@@ -16,6 +16,25 @@ import { getFilmFacts } from "@/shared/api/facts";
 import FilmFacts from "@/app/(main)/movies/[id]/_components/film-facts";
 import FavoriteButton from "@/app/(main)/movies/[id]/_components/favorite-button";
 import WatchButtons from "@/app/(main)/movies/[id]/_components/watch-buttons";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const film = await getFilmByIdSafe(id);
+  if (!film) return {};
+  return {
+    title: film.nameRu ?? film.nameOriginal ?? "Фильм",
+    description: film.description,
+    openGraph: {
+      title: film.nameRu ?? film.nameOriginal ?? "Фильм",
+      description: film.description,
+      images: film.posterUrl ? [film.posterUrl] : [],
+    },
+  };
+}
 
 export default async function MoviePage({
   params,
