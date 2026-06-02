@@ -213,6 +213,34 @@ export type TFilmFacts = {
   spoiler: boolean;
 };
 
+export type PersonFilm = {
+  filmId: number;
+  nameRu: string | null;
+  nameEn: string | null;
+  rating: string | null;
+  general: boolean;
+  description: string | null;
+  professionKey: StaffType;
+};
+
+export type PersonDetail = {
+  personId: number;
+  nameRu: string | null;
+  nameEn: string | null;
+  posterUrl: string;
+  sex: "MALE" | "FEMALE" | null;
+  growth: string | null;
+  birthday: string | null;
+  death: string | null;
+  age: number | null;
+  birthplace: string | null;
+  deathplace: string | null;
+  hasAwards: number | null;
+  profession: string | null;
+  facts: string[];
+  films: PersonFilm[];
+};
+
 export type SimilarFilmResponse = {
   total: number;
   items: SimilarFilm[];

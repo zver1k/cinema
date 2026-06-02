@@ -11,3 +11,18 @@ export const PROFESSION_LABELS: Partial<Record<StaffType, string>> = {
   DESIGN: "Художники",
   EDITOR: "Монтажеры",
 };
+
+export const PERSON_ROLE_LABELS: Record<StaffType, string> = {
+  WRITER: "Сценарист",
+  OPERATOR: "Оператор",
+  EDITOR: "Монтажер",
+  COMPOSER: "Композитор",
+  PRODUCER_USSR: "Продюсер",
+  TRANSLATOR: "Переводчик",
+  DIRECTOR: "Режиссер",
+  DESIGN: "Художник",
+  PRODUCER: "Продюсер",
+  ACTOR: "Актер",
+  VOICE_DIRECTOR: "Режиссер дубляжа",
+  UNKNOWN: "Неизвестно",
+};
