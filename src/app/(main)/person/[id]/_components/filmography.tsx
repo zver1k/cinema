@@ -2,6 +2,7 @@ import { PersonFilm, StaffType } from "@/shared/types/api.types";
 import Link from "next/link";
 import { PERSON_ROLE_LABELS } from "@/shared/constants/staff";
 import RatingBadge from "@/shared/ui/rating-badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 
 function Filmography({ films }: { films: PersonFilm[] }) {
   const grouped = films.reduce(
@@ -13,14 +14,19 @@ function Filmography({ films }: { films: PersonFilm[] }) {
     },
     {} as Record<string, PersonFilm[]>,
   );
+  const entries = Object.entries(grouped);
   return (
-    <div className="flex flex-col gap-8">
-      {Object.entries(grouped).map(([key, groupFilms]) => (
-        <section key={key}>
-          <h3 className="mb-3 text-[18px] font-semibold">
+    <Tabs defaultValue={entries[0]?.[0]} className="w-full">
+      <TabsList>
+        {entries.map(([key, groupFilms]) => (
+          <TabsTrigger key={key} value={key}>
             {PERSON_ROLE_LABELS[key as StaffType]} ({groupFilms.length})
-          </h3>
+          </TabsTrigger>
+        ))}
+      </TabsList>
 
+      {entries.map(([key, groupFilms]) => (
+        <TabsContent key={key} value={key}>
           <ul className="flex flex-col">
             {groupFilms.map((film, i) => (
               <li
@@ -37,9 +43,9 @@ function Filmography({ films }: { films: PersonFilm[] }) {
               </li>
             ))}
           </ul>
-        </section>
+        </TabsContent>
       ))}
-    </div>
+    </Tabs>
   );
 }
 
