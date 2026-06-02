@@ -2,20 +2,27 @@ import { getFilms } from "@/shared/api/films";
 import MovieGrid from "@/shared/ui/movie-grid";
 import Link from "next/link";
 import { Button } from "@/shared/ui/button";
+import { getFilters } from "@/shared/api/filters";
+import GenreFilter from "@/app/(main)/movies/_components/genre-filter";
 
 async function MoviesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; genre?: string }>;
 }) {
-  const { page } = await searchParams;
+  const { page, genre } = await searchParams;
   const currentPage = Number(page) || 1;
-  const { items, totalPages } = await getFilms(0, currentPage);
+  const activeGenre = Number(genre) || 0;
+  const [{ items, totalPages }, { genres, countries }] = await Promise.all([
+    getFilms(activeGenre, currentPage),
+    getFilters(),
+  ]);
   const isFirst = currentPage <= 1;
   const isLast = currentPage >= totalPages;
 
   return (
     <div>
+      <GenreFilter genres={genres} activeGenre={activeGenre} />
       <MovieGrid films={items} view={"grid"} />
       <div className="flex justify-between mt-4">
         {isFirst ? (
@@ -24,7 +31,9 @@ async function MoviesPage({
           </Button>
         ) : (
           <Button asChild variant="secondary">
-            <Link href={`?page=${currentPage - 1}`}>Назад</Link>
+            <Link href={`?genre=${activeGenre}&page=${currentPage - 1}`}>
+              Назад
+            </Link>
           </Button>
         )}
         {isLast ? (
@@ -33,7 +42,9 @@ async function MoviesPage({
           </Button>
         ) : (
           <Button asChild variant="secondary">
-            <Link href={`?page=${currentPage + 1}`}>Вперёд</Link>
+            <Link href={`?genre=${activeGenre}&page=${currentPage + 1}`}>
+              Вперёд
+            </Link>
           </Button>
         )}
       </div>
