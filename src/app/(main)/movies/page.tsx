@@ -9,19 +9,33 @@ import { getFilmsByKeyword } from "@/shared/api/search";
 async function MoviesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; genre?: string; keyword?: string }>;
+  searchParams: Promise<{
+    page?: string;
+    genre?: string;
+    keyword?: string;
+    type?: string;
+  }>;
 }) {
-  const { page, genre, keyword } = await searchParams;
+  const { page, genre, keyword, type } = await searchParams;
   const currentPage = Number(page) || 1;
   const activeGenre = Number(genre) || 0;
   const [{ items, totalPages }, { genres }] = await Promise.all([
     keyword
-      ? getFilmsByKeyword({ keyword, page: currentPage })
+      ? getFilmsByKeyword({ keyword, page: currentPage, type })
       : getFilms(activeGenre, currentPage),
     getFilters(),
   ]);
   const isFirst = currentPage <= 1;
   const isLast = currentPage >= totalPages;
+
+  const paginationParams = (p: number) => {
+    const params = new URLSearchParams();
+    if (keyword) params.set("keyword", keyword);
+    if (type) params.set("type", type);
+    if (activeGenre) params.set("genre", activeGenre.toString());
+    params.set("page", p.toString());
+    return `?${params.toString()}`;
+  };
 
   return (
     <div>
@@ -34,9 +48,7 @@ async function MoviesPage({
           </Button>
         ) : (
           <Button asChild variant="secondary">
-            <Link href={`?genre=${activeGenre}&page=${currentPage - 1}`}>
-              Назад
-            </Link>
+            <Link href={paginationParams(currentPage - 1)}>Назад</Link>
           </Button>
         )}
         {isLast ? (
@@ -45,9 +57,7 @@ async function MoviesPage({
           </Button>
         ) : (
           <Button asChild variant="secondary">
-            <Link href={`?genre=${activeGenre}&page=${currentPage + 1}`}>
-              Вперёд
-            </Link>
+            <Link href={paginationParams(currentPage + 1)}>Вперёд</Link>
           </Button>
         )}
       </div>

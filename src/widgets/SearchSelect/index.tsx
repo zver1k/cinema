@@ -8,16 +8,29 @@ import {
   SelectValue,
   SelectTrigger,
 } from "@/shared/ui/select";
-import { useState } from "react";
 import { searchData } from "@/shared/constants/search";
-import { FilmType } from "@/shared/types/api.types";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 function SearchSelect() {
-  const [value, setValue] = useState<FilmType | "ALL">("ALL");
+  const searchParams = useSearchParams();
+  const type = searchParams.get("type") ?? "";
+  const pathname = usePathname();
+  const router = useRouter();
+
   return (
     <Select
-      value={value}
-      onValueChange={(val) => setValue(val as FilmType | "ALL")}
+      value={type || "ALL"}
+      onValueChange={(val) => {
+        const params = new URLSearchParams(searchParams.toString());
+        if (val === "ALL") params.delete("type");
+        else params.set("type", val);
+        params.delete("page");
+        const target =
+          pathname === "/movies"
+            ? `?${params.toString()}`
+            : `/movies?${params.toString()}`;
+        router.push(target);
+      }}
     >
       <SelectTrigger className="w-40 rounded-full bg-card">
         <SelectValue placeholder="Все" />
