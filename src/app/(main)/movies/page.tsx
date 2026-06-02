@@ -4,17 +4,20 @@ import Link from "next/link";
 import { Button } from "@/shared/ui/button";
 import { getFilters } from "@/shared/api/filters";
 import GenreFilter from "@/app/(main)/movies/_components/genre-filter";
+import { getFilmsByKeyword } from "@/shared/api/search";
 
 async function MoviesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; genre?: string }>;
+  searchParams: Promise<{ page?: string; genre?: string; keyword?: string }>;
 }) {
-  const { page, genre } = await searchParams;
+  const { page, genre, keyword } = await searchParams;
   const currentPage = Number(page) || 1;
   const activeGenre = Number(genre) || 0;
-  const [{ items, totalPages }, { genres, countries }] = await Promise.all([
-    getFilms(activeGenre, currentPage),
+  const [{ items, totalPages }, { genres }] = await Promise.all([
+    keyword
+      ? getFilmsByKeyword({ keyword, page: currentPage })
+      : getFilms(activeGenre, currentPage),
     getFilters(),
   ]);
   const isFirst = currentPage <= 1;

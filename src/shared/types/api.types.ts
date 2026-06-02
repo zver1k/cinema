@@ -183,6 +183,21 @@ export type SimilarFilm = {
   posterUrlPreview: string;
   relationType: "SIMILAR";
 };
+export type SearchFilm = {
+  filmId: number;
+  nameRu: string | null;
+  nameEn: string | null;
+  type: FilmType;
+  year: string;
+  description: string;
+  filmLength: string;
+  countries: { country: string }[];
+  genres: { genre: string }[];
+  rating: string;
+  ratingVoteCount: number;
+  posterUrl: string;
+  posterUrlPreview: string;
+};
 
 export type BoxOfficeFilm = {
   type: string;
@@ -211,4 +226,10 @@ export type BoxOfficeResponse = {
 export type FilmFactsResponse = {
   total: number;
   items: TFilmFacts[];
+};
+export type FilmSearchResponse = {
+  keyword: string;
+  pagesCount: number;
+  searchFilmsCountResult: number;
+  films: SearchFilm[];
 };
