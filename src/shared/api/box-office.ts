@@ -9,6 +9,7 @@ export const getBoxOffice = async (id: string) => {
       },
     },
   );
+  if (data.status === 404) return [];
   if (!data.ok)
     throw new Error(`Ошибка: ${data.status}, подробнее: ${data.statusText}`);
   const response: BoxOfficeResponse = await data.json();

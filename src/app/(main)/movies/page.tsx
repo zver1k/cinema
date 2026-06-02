@@ -3,7 +3,7 @@ import MovieGrid from "@/shared/ui/movie-grid";
 import Link from "next/link";
 import { Button } from "@/shared/ui/button";
 import { getFilters } from "@/shared/api/filters";
-import GenreFilter from "@/app/(main)/movies/_components/genre-filter";
+import GenreFilter from "@/shared/ui/genre-filter";
 import { getFilmsByKeyword } from "@/shared/api/search";
 
 async function MoviesPage({
@@ -19,10 +19,15 @@ async function MoviesPage({
   const { page, genre, keyword, type } = await searchParams;
   const currentPage = Number(page) || 1;
   const activeGenre = Number(genre) || 0;
+
   const [{ items, totalPages }, { genres }] = await Promise.all([
     keyword
       ? getFilmsByKeyword({ keyword, page: currentPage, type })
-      : getFilms(activeGenre, currentPage),
+      : getFilms({
+          genreID: activeGenre || undefined,
+          page: currentPage,
+          type,
+        }),
     getFilters(),
   ]);
   const isFirst = currentPage <= 1;

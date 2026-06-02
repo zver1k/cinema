@@ -1,9 +1,18 @@
 import { FilmDetail, FilmResponse } from "@/shared/types/api.types";
 import { notFound } from "next/navigation";
 
-export const getFilms = async (genreID?: number, page: number = 1) => {
+export const getFilms = async ({
+  genreID,
+  page = 1,
+  type,
+}: {
+  genreID?: number;
+  page?: number;
+  type?: string;
+}) => {
   const params = new URLSearchParams();
   if (genreID) params.append("genres", genreID.toString());
+  if (type) params.append("type", type);
   params.append("page", page.toString());
   const data = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/v2.2/films?${params.toString()}`,

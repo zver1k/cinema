@@ -3,11 +3,14 @@ import { FilmSearchResponse } from "@/shared/types/api.types";
 export const getFilmsByKeyword = async ({
   keyword,
   page,
+  type,
 }: {
   keyword: string;
   page: number;
+  type?: string;
 }) => {
   const params = new URLSearchParams();
+  if (type && type !== "ALL") params.append("type", type);
   params.append("keyword", keyword.toString());
   params.append("page", page.toString());
   const data = await fetch(
