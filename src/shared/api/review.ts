@@ -11,6 +11,7 @@ export const getReviewsById = async (
       headers: {
         "X-API-KEY": process.env.API_KEY!,
       },
+      next: { revalidate: 60 * 60 * 24 },
     },
   );
   if (data.status === 402)

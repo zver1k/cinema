@@ -20,7 +20,7 @@ export const getFilms = async ({
       headers: {
         "X-API-KEY": process.env.API_KEY!,
       },
-      next: { revalidate: 3600 },
+      next: { revalidate: 60 * 60 * 24 },
     },
   );
   if (data.status === 402) return { items: [], total: 0, totalPages: 0 };
@@ -37,6 +37,7 @@ export const getFilmsById = async (id: string) => {
       headers: {
         "X-API-KEY": process.env.API_KEY!,
       },
+      next: { revalidate: 60 * 60 * 24 },
     },
   );
   if (data.status === 404 || data.status === 400 || data.status === 402)
@@ -54,6 +55,7 @@ export const getFilmByIdSafe = async (id: string) => {
       headers: {
         "X-API-KEY": process.env.API_KEY!,
       },
+      next: { revalidate: 60 * 60 * 24 },
     },
   );
   if (data.status === 404 || data.status === 400 || data.status === 402)

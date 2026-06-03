@@ -8,6 +8,7 @@ export const getCastById = async (id: string) => {
       headers: {
         "X-API-KEY": process.env.API_KEY!,
       },
+      next: { revalidate: 60 * 60 * 24 },
     },
   );
   if (data.status === 404 || data.status === 402) return [];
@@ -24,6 +25,7 @@ export const getPersonById = async (id: string) => {
       headers: {
         "X-API-KEY": process.env.API_KEY!,
       },
+      next: { revalidate: 60 * 60 * 24 },
     },
   );
   if (data.status === 404 || data.status === 400 || data.status === 402)
