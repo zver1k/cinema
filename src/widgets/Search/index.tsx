@@ -6,6 +6,9 @@ import { ButtonGroup } from "@/shared/ui/button-group";
 import { Input } from "@/shared/ui/input";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { searchMovies } from "@/widgets/Search/actions";
+import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 
 function Search() {
   const [value, setValue] = useState("");
@@ -13,6 +16,14 @@ function Search() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const type = searchParams.get("type") ?? "";
+
+  const [debouncedValue, setDebouncedValue] = useState("");
+  const { data, isLoading } = useQuery({
+    queryKey: ["search", debouncedValue],
+    queryFn: () => searchMovies({ keyword: debouncedValue }),
+    enabled: debouncedValue.length > 0,
+    staleTime: 1000 * 60 * 5,
+  });
 
   const buildTarget = (kw: string) => {
     const params = new URLSearchParams();
@@ -24,11 +35,7 @@ function Search() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (!value) {
-        if (pathname === "/movies") router.push("/movies");
-        return;
-      }
-      router.push(buildTarget(value));
+      setDebouncedValue(value);
     }, 400);
     return () => clearTimeout(timer);
   }, [value]);
@@ -48,6 +55,13 @@ function Search() {
           Поиск
         </Button>
       </ButtonGroup>
+      {isLoading && <p>Загрузка...</p>}
+      {data && <p>Найдено: {data.items.length}</p>}
+      {data?.items.map((film) => (
+        <Link key={film.kinopoiskId} href={`/movies/${film.kinopoiskId}`}>
+          {film.nameRu} ({film.year})
+        </Link>
+      ))}
     </Field>
   );
 }
