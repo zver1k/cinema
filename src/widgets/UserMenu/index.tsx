@@ -12,7 +12,7 @@ function UserMenu() {
   const { data: session, isPending, error } = useSession();
   const router = useRouter();
   if (isPending) return <Spinner />;
-  if (error) return <div>{error.message}</div>;
+  if (error) return <Link href={"/login"}>Авторизация</Link>;
 
   return (
     <div className="bg-card h-14 flex items-center gap-2 justify-between">
