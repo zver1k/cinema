@@ -13,6 +13,15 @@ export const getReviewsById = async (
       },
     },
   );
+  if (data.status === 402)
+    return {
+      items: [],
+      total: 0,
+      totalPages: 0,
+      totalPositiveReviews: 0,
+      totalNegativeReviews: 0,
+      totalNeutralReviews: 0,
+    };
   if (!data.ok)
     throw new Error(`Ошибка: ${data.status}, подробнее: ${data.statusText}`);
   const response: ReviewResponse = await data.json();

@@ -10,7 +10,7 @@ export const getCastById = async (id: string) => {
       },
     },
   );
-  if (data.status === 404) return [];
+  if (data.status === 404 || data.status === 402) return [];
   if (!data.ok)
     throw new Error(`Ошибка: ${data.status}, подробнее: ${data.statusText}`);
   const response: Staff[] = await data.json();
@@ -26,7 +26,8 @@ export const getPersonById = async (id: string) => {
       },
     },
   );
-  if (data.status === 404 || data.status === 400) return notFound();
+  if (data.status === 404 || data.status === 400 || data.status === 402)
+    return notFound();
   if (!data.ok)
     throw new Error(`Ошибка: ${data.status}, подробнее: ${data.statusText}`);
   const response: PersonDetail = await data.json();

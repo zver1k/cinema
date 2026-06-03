@@ -9,6 +9,7 @@ export const getSimilarById = async (id: string) => {
       },
     },
   );
+  if (data.status === 402) return { items: [], total: 0 };
   if (!data.ok)
     throw new Error(`Ошибка: ${data.status}, подробнее: ${data.statusText}`);
   const response: SimilarFilmResponse = await data.json();

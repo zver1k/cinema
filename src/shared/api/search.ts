@@ -22,6 +22,7 @@ export const getFilmsByKeyword = async ({
       next: { revalidate: 3600 },
     },
   );
+  if (data.status === 402) return { items: [], total: 0, totalPages: 0 };
   if (!data.ok)
     throw new Error(`Ошибка: ${data.status}, подробнее: ${data.statusText}`);
   const response: FilmSearchResponse = await data.json();
