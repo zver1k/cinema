@@ -5,6 +5,7 @@ import { Button } from "@/shared/ui/button";
 import { getFilters } from "@/shared/api/filters";
 import GenreFilter from "@/shared/ui/genre-filter";
 import { getFilmsByKeyword } from "@/shared/api/search";
+import { connection } from "next/server";
 
 async function SeriesPage({
   searchParams,
@@ -15,6 +16,8 @@ async function SeriesPage({
     keyword?: string;
   }>;
 }) {
+  await connection();
+
   const { page, genre, keyword } = await searchParams;
   const currentPage = Number(page) || 1;
   const activeGenre = Number(genre) || 0;

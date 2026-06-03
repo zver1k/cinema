@@ -1,8 +1,9 @@
 import CollectionSection from "@/widgets/CollectionSection";
+import { connection } from "next/server";
 
-export const revalidate = 86400;
+export default async function Home() {
+  await connection();
 
-export default function Home() {
   return (
     <div className="flex flex-col gap-2">
       <CollectionSection
