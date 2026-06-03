@@ -4,6 +4,8 @@ import SidebarHeader from "@/widgets/Sidebar/SidebarHeader";
 import { Button } from "@/shared/ui/button";
 import AuthSection from "@/widgets/AuthSection";
 
+export const dynamic = "force-dynamic";
+
 function Page() {
   return (
     <div className="flex min-h-screen bg-background text-foreground">

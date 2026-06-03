@@ -5,6 +5,8 @@ import SidebarHeader from "@/widgets/Sidebar/SidebarHeader";
 import RegisterForm from "@/app/(auth)/register/_components/register-form";
 import AuthSection from "@/widgets/AuthSection";
 
+export const dynamic = "force-dynamic";
+
 function Page() {
   return (
     <div className="flex min-h-screen bg-background text-foreground">

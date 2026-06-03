@@ -3,6 +3,8 @@ import SidebarHeader from "@/widgets/Sidebar/SidebarHeader";
 import AuthSection from "@/widgets/AuthSection";
 import ResetPasswordForm from "@/app/(auth)/reset-password/_components/reset-password-form";
 
+export const dynamic = "force-dynamic";
+
 async function ResetPage({
   searchParams,
 }: {
