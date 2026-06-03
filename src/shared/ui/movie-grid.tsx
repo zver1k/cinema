@@ -11,7 +11,7 @@ function MovieCard({
   basePath = "/movies",
 }: {
   film: MovieItem;
-  basePath: string;
+  basePath?: string;
 }) {
   return (
     <Link href={`${basePath}/${film.kinopoiskId}`}>
@@ -38,7 +38,7 @@ function MovieRow({
   basePath = "/movies",
 }: {
   film: MovieItem;
-  basePath: string;
+  basePath?: string;
 }) {
   return (
     <Link href={`${basePath}/${film.kinopoiskId}`}>
@@ -84,7 +84,7 @@ function MovieGrid({
 }: {
   films: MovieItem[];
   view: ViewMode;
-  basePath: string;
+  basePath?: string;
 }) {
   return (
     <div
