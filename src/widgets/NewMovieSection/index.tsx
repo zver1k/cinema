@@ -1,4 +1,4 @@
-// import { getFilmPremieres } from "@/shared/api/premieres";
+import { getFilmPremieres } from "@/shared/api/premieres";
 import {
   Card,
   CardAction,
@@ -9,11 +9,10 @@ import {
 } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
-import { mockPremieres } from "@/shared/mocks/premieres";
 import Image from "next/image";
 
-export function NewMovieSection() {
-  const { items } = mockPremieres;
+export async function NewMovieSection() {
+  const { items } = await getFilmPremieres();
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
