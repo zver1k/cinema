@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 
 import { Button } from "@/shared/ui/button";
@@ -21,7 +22,9 @@ function Page() {
             коллекции.
           </p>
 
-          <LoginForm />
+          <Suspense>
+            <LoginForm />
+          </Suspense>
 
           <div className="mt-5 text-sm text-muted-foreground">
             Нет аккаунта?{" "}
