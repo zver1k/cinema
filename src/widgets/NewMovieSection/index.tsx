@@ -9,14 +9,15 @@ import {
 } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
-import Image from "next/image";
+import Link from "next/link";
+import PosterImage from "@/shared/ui/poster-image";
 
 export async function NewMovieSection() {
   const { items } = await getFilmPremieres();
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
-      {items.map((film, index) => {
+      {items.map((film) => {
         const formattedDate = new Intl.DateTimeFormat("ru-RU", {
           day: "numeric",
           month: "long",
@@ -28,15 +29,13 @@ export async function NewMovieSection() {
             className="relative mx-auto w-full max-w-sm pt-0"
           >
             <div className="relative aspect-2/3 w-full overflow-hidden rounded-t-xl">
-              <Image
-                src={film.posterUrlPreview}
-                alt={film.nameRu ?? film.nameEn ?? "Логотип"}
-                fill
-                priority={index === 0}
-                sizes="(max-width: 639px) calc(100vw - 80px), (max-width: 1023px) calc((100vw - 96px) / 2), (max-width: 1535px) calc((100vw - 416px) / 3), calc((100vw - 432px) / 4)"
-                unoptimized
-                className="object-cover"
-              />
+              <Link href={`/movies/${film.kinopoiskId}`}>
+                <PosterImage
+                  alt={film.nameRu || film.nameEn || ""}
+                  src={film.posterUrl}
+                  sizes="(max-width: 639px) calc(100vw), (max-width: 767px) calc((100vw - 10px) / 2), (max-width: 1023px) calc((100vw - 350px) / 4), calc((100vw - 370px) / 6)"
+                />
+              </Link>
             </div>
             <CardHeader>
               <CardAction className="flex flex-col gap-2">
@@ -52,35 +51,35 @@ export async function NewMovieSection() {
                 {film.nameRu ?? film.nameEn ?? "Без названия"}
               </CardTitle>
               <CardDescription>
-                <ul className="my-6 ml-6 list-disc [&>li]:mt-2">
-                  <li>
-                    Длительность:{" "}
-                    {film.duration
-                      ? `${Math.floor(film.duration / 60)} ч ${film.duration % 60} мин`
-                      : "-"}
-                  </li>
-                  <li>
-                    Страна:{" "}
-                    {film.countries.map((country) => {
-                      return (
-                        <Badge key={country.country}>{country.country}</Badge>
-                      );
-                    })}
-                  </li>
-                  <li>Год производства: {film.year}</li>
-                  <li>
-                    <div className="flex flex-col gap-2">
-                      Премьера в России:
-                      <span className="text-lg font-semibold">
-                        {formattedDate}
-                      </span>
+                <div className="flex flex-col gap-2 ">
+                  {film.duration && (
+                    <p>
+                      {`Длительность: ${Math.floor(film.duration / 60)} ч ${film.duration % 60}
+                      мин`}
+                    </p>
+                  )}
+                  <div className="flex flex-col gap-2">
+                    <p> Страна:</p>
+                    <div className="flex gap-2">
+                      {film.countries.map((country) => {
+                        return (
+                          <Badge key={country.country}>{country.country}</Badge>
+                        );
+                      })}
                     </div>
-                  </li>
-                </ul>
+                  </div>
+                  {film.year && <p>Год производства: {film.year} г.</p>}
+                  <div className="flex gap-2">
+                    Премьера в России:
+                    <span className="font-semibold">{formattedDate}</span>
+                  </div>
+                </div>
               </CardDescription>
             </CardHeader>
             <CardFooter>
-              <Button className="w-full">Подробнее</Button>
+              <Button asChild className="w-full">
+                <Link href={`/movies/${film.kinopoiskId}`}>Подробнее</Link>
+              </Button>
             </CardFooter>
           </Card>
         );

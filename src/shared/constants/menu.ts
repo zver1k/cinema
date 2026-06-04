@@ -1,4 +1,4 @@
-import { House, Telescope, Heart, User, Settings2 } from "lucide-react";
+import { House, Telescope, Heart, User, Popcorn } from "lucide-react";
 
 export const sidebarItems = [
   {
@@ -7,9 +7,14 @@ export const sidebarItems = [
     href: "/",
   },
   {
-    title: "Обзор",
+    title: "Каталог",
     icon: Telescope,
-    href: "/explore",
+    href: "/movies",
+  },
+  {
+    title: "Новинки",
+    icon: Popcorn,
+    href: "/new",
   },
   {
     title: "Избранное",
@@ -19,11 +24,6 @@ export const sidebarItems = [
   {
     title: "Профиль",
     icon: User,
-    href: "/profile",
-  },
-  {
-    title: "Настройки",
-    icon: Settings2,
     href: "/profile?tab=settings",
   },
 ];

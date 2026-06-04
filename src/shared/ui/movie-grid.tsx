@@ -6,15 +6,9 @@ import { ViewMode } from "@/shared/types/search.types";
 import { Badge } from "@/shared/ui/badge";
 import PosterImage from "@/shared/ui/poster-image";
 
-function MovieCard({
-  film,
-  basePath = "/movies",
-}: {
-  film: MovieItem;
-  basePath?: string;
-}) {
+function MovieCard({ film }: { film: MovieItem }) {
   return (
-    <Link href={`${basePath}/${film.kinopoiskId}`}>
+    <Link href={`/movies/${film.kinopoiskId}`}>
       <Card className="relative w-full py-0 overflow-hidden transition hover:scale-103">
         <div className="relative aspect-2/3 w-full overflow-hidden">
           <PosterImage
@@ -33,15 +27,9 @@ function MovieCard({
   );
 }
 
-function MovieRow({
-  film,
-  basePath = "/movies",
-}: {
-  film: MovieItem;
-  basePath?: string;
-}) {
+function MovieRow({ film }: { film: MovieItem }) {
   return (
-    <Link href={`${basePath}/${film.kinopoiskId}`}>
+    <Link href={`/movies/${film.kinopoiskId}`}>
       <Card className="flex flex-row gap-4 p-6 transition hover:scale-103">
         <div className="relative h-60 w-40 shrink-0 overflow-hidden rounded-xl">
           <PosterImage
@@ -80,11 +68,9 @@ function MovieRow({
 function MovieGrid({
   films,
   view = "grid",
-  basePath = "/movies",
 }: {
   films: MovieItem[];
   view: ViewMode;
-  basePath?: string;
 }) {
   return (
     <div
@@ -92,9 +78,9 @@ function MovieGrid({
     >
       {films.map((film) =>
         view === "grid" ? (
-          <MovieCard key={film.kinopoiskId} film={film} basePath={basePath} />
+          <MovieCard key={film.kinopoiskId} film={film} />
         ) : (
-          <MovieRow key={film.kinopoiskId} film={film} basePath={basePath} />
+          <MovieRow key={film.kinopoiskId} film={film} />
         ),
       )}
     </div>

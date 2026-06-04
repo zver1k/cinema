@@ -31,7 +31,6 @@ function PosterImage({
       {errorLoadingImage && (
         <div className="absolute flex flex-col gap-2 items-center justify-center inset-0 bg-muted">
           <ImageOff size={32} />
-          <span>Нет постера</span>
         </div>
       )}
     </>

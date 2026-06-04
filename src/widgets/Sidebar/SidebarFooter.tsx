@@ -1,7 +1,8 @@
 import Link from "next/link";
-import Image from "next/image";
+
 import { getRandomItems } from "@/shared/lib/array";
 import { getFilmPremieres } from "@/shared/api/premieres";
+import PosterImage from "@/shared/ui/poster-image";
 
 async function SidebarFooter() {
   const { items = [] } = await getFilmPremieres();
@@ -29,14 +30,13 @@ async function SidebarFooter() {
             key={film.kinopoiskId}
             className="flex items-center gap-3 cursor-pointer group"
           >
-            <Image
-              src={film.posterUrlPreview}
-              alt={film.nameRu ?? film.nameEn ?? "Нет названия"}
-              height={64}
-              width={48}
-              unoptimized
-              className="h-16 w-12 shrink-0 rounded-lg object-cover"
-            />
+            <div className="relative h-16 w-12 overflow-hidden rounded-t-xl">
+              <PosterImage
+                alt={film.nameRu || film.nameEn || ""}
+                src={film.posterUrlPreview}
+                sizes="48px"
+              />
+            </div>
             <div className="flex flex-col gap-2">
               <span className="text-sm text-white transition group-hover:text-primary">
                 {film.nameRu}
