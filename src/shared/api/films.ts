@@ -23,7 +23,8 @@ export const getFilms = async ({
       next: { revalidate: 60 * 60 * 24 },
     },
   );
-  if (data.status === 402) return { items: [], total: 0, totalPages: 0 };
+  if (data.status === 402)
+    return { items: [] as FilmResponse["items"], total: 0, totalPages: 0 };
   if (!data.ok)
     throw new Error(`Ошибка: ${data.status}, подробнее: ${data.statusText}`);
   const response: FilmResponse = await data.json();

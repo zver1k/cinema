@@ -1,0 +1,54 @@
+"use client";
+
+import { ViewMode } from "@/shared/types/search.types";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { fetchMovies } from "@/app/(main)/movies/actions";
+import MovieGrid from "@/shared/ui/movie-grid";
+import { Button } from "@/shared/ui/button";
+import { MovieItem } from "@/shared/types/api.types";
+
+function InfiniteMovies({
+  view = "grid",
+  keyword,
+  type,
+  genreID,
+}: {
+  view?: ViewMode;
+  keyword?: string;
+  type?: string;
+  genreID?: number;
+}) {
+  const result = useInfiniteQuery({
+    queryKey: ["movies", keyword, type, genreID],
+    queryFn: ({ pageParam }) =>
+      fetchMovies({ page: pageParam, keyword, type, genreID }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) =>
+      allPages.length < lastPage.totalPages ? allPages.length + 1 : undefined,
+  });
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = result;
+  const films = (data?.pages.flatMap((page) => page.items) ??
+    []) as MovieItem[];
+  const unique = films.filter(
+    (film, index, self) =>
+      self.findIndex((f) => f.kinopoiskId === film.kinopoiskId) === index,
+  );
+  return (
+    <div>
+      <MovieGrid films={unique} view={view} />
+      {hasNextPage && (
+        <div className="flex justify-center items-center pt-4">
+          <Button
+            onClick={() => fetchNextPage()}
+            variant="default"
+            disabled={isFetchingNextPage}
+          >
+            Загрузить ещё
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default InfiniteMovies;

@@ -11,7 +11,10 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 
 function Search() {
+  "use no memo";
+
   const [value, setValue] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -39,30 +42,54 @@ function Search() {
     }, 400);
     return () => clearTimeout(timer);
   }, [value]);
+
   return (
-    <Field>
-      <ButtonGroup>
-        <Input
-          className="bg-card"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          placeholder="Поиск..."
-        />
-        <Button
-          onClick={() => router.push(buildTarget(value))}
-          variant="outline"
-        >
-          Поиск
-        </Button>
-      </ButtonGroup>
-      {isLoading && <p>Загрузка...</p>}
-      {data && <p>Найдено: {data.items.length}</p>}
-      {data?.items.map((film) => (
-        <Link key={film.kinopoiskId} href={`/movies/${film.kinopoiskId}`}>
-          {film.nameRu} ({film.year})
-        </Link>
-      ))}
-    </Field>
+    <div className="relative w-full">
+      <Field>
+        <ButtonGroup>
+          <Input
+            className="bg-card"
+            value={value}
+            onChange={(e) => {
+              setValue(e.target.value);
+              setIsOpen(true);
+            }}
+            placeholder="Поиск..."
+          />
+          <Button
+            onClick={() => router.push(buildTarget(value))}
+            variant="outline"
+          >
+            Поиск
+          </Button>
+        </ButtonGroup>
+
+        {isOpen && (
+          <div
+            className="fixed inset-0 z-40"
+            onClick={() => setIsOpen(false)}
+          />
+        )}
+
+        {isOpen && (isLoading || (data?.items && data.items.length > 0)) && (
+          <div className="absolute top-full left-0 right-0 z-50 bg-card rounded-b-md shadow-lg flex flex-col">
+            {isLoading && (
+              <p className="px-3 py-2 text-muted-foreground">Загрузка...</p>
+            )}
+            {data?.items.map((film) => (
+              <Link
+                key={film.kinopoiskId}
+                href={`/movies/${film.kinopoiskId}`}
+                className="px-3 py-2 hover:bg-muted"
+                onClick={() => setIsOpen(false)}
+              >
+                {film.nameRu} ({film.year})
+              </Link>
+            ))}
+          </div>
+        )}
+      </Field>
+    </div>
   );
 }
 
