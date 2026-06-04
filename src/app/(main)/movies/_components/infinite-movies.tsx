@@ -6,6 +6,7 @@ import { fetchMovies } from "@/app/(main)/movies/actions";
 import MovieGrid from "@/shared/ui/movie-grid";
 import { Button } from "@/shared/ui/button";
 import { MovieItem } from "@/shared/types/api.types";
+import { useEffect, useRef } from "react";
 
 function InfiniteMovies({
   view = "grid",
@@ -18,6 +19,7 @@ function InfiniteMovies({
   type?: string;
   genreID?: number;
 }) {
+  const sentinelRef = useRef<HTMLDivElement>(null);
   const result = useInfiniteQuery({
     queryKey: ["movies", keyword, type, genreID],
     queryFn: ({ pageParam }) =>
@@ -33,6 +35,13 @@ function InfiniteMovies({
     (film, index, self) =>
       self.findIndex((f) => f.kinopoiskId === film.kinopoiskId) === index,
   );
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && hasNextPage) fetchNextPage();
+    });
+    if (sentinelRef.current) observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
+  }, [hasNextPage, fetchNextPage]);
   return (
     <div>
       <MovieGrid films={unique} view={view} />
@@ -47,6 +56,7 @@ function InfiniteMovies({
           </Button>
         </div>
       )}
+      <div ref={sentinelRef} />
     </div>
   );
 }

@@ -315,6 +315,22 @@
 - Когда типы слишком разные для прямого `as T` — двойное приведение `as unknown as T`. Осознанное «я знаю что делаю» — оба источника реально совместимы, компилятор просто не видит.
 - `items: [] as Film[]` — явная аннотация пустого массива в fallback-е, иначе TypeScript выводит `never[]`.
 
+### `IntersectionObserver` — автоподгрузка при скролле
+
+- Браузерное API: следит за тем, попал ли элемент в зону видимости viewport.
+- Паттерн: невидимый **элемент-маяк** (`<div ref={sentinelRef} />`) в конце списка. Как только маяк появляется → вызываем `fetchNextPage()`.
+- Структура в `useEffect`:
+  ```tsx
+  const observer = new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting && hasNextPage) fetchNextPage();
+  });
+  if (sentinelRef.current) observer.observe(sentinelRef.current);
+  return () => observer.disconnect(); // cleanup — отписаться
+  ```
+- Зависимости `[hasNextPage, fetchNextPage]` — пересоздавать обсервер при смене этих значений.
+- `if (sentinelRef.current)` — проверка обязательна: при первом рендере ref может быть `null`.
+- Кнопка «Загрузить ещё» остаётся как fallback — пользователь может и докрутить и кликнуть, они не мешают друг другу.
+
 ### URL-параметр для переключения режима
 
 - `?view=pagination` / `?view=infinite` — хелпер `viewParams(v)` сохраняет остальные параметры (`keyword`, `type`, `genre`), меняет только `view`. Тот же паттерн что `paginationParams`.
@@ -326,4 +342,4 @@
 - ~~Бесконечная прокрутка через `useInfiniteQuery`~~ ✅ (переключатель пагинация/бесконечная через `?view=`)
 - Оптимизация: `loading.tsx` для поиска, `Suspense` под фильтры.
 - (Запах) Слить идентичные `movies/[id]` и `series/[id]` в одну страницу.
-- Автоматическая подгрузка при скролле (`IntersectionObserver` вместо кнопки).
+- ~~Автоматическая подгрузка при скролле (`IntersectionObserver`)~~ ✅
