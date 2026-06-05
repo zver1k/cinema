@@ -5,10 +5,11 @@ import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { WatchStatus } from "@/generated/prisma/enums";
+import { redirect } from "next/navigation";
 
 export async function toggleFavorite(movieId: string) {
   const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) return;
+  if (!session) return redirect("/login");
   const userId = session.user.id;
   const existing = await prisma.favorite.findUnique({
     where: { userId_movieId: { userId, movieId } },
@@ -27,7 +28,7 @@ export async function toggleFavorite(movieId: string) {
 
 export async function setWatchStatus(movieId: string, status: WatchStatus) {
   const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) return;
+  if (!session) return redirect("/login");
   const userId = session.user.id;
   const existing = await prisma.watchlist.findUnique({
     where: { userId_movieId: { userId, movieId } },

@@ -17,6 +17,8 @@ import FilmFacts from "@/app/(main)/movies/[id]/_components/film-facts";
 import FavoriteButton from "@/app/(main)/movies/[id]/_components/favorite-button";
 import WatchButtons from "@/app/(main)/movies/[id]/_components/watch-buttons";
 import type { Metadata } from "next";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export async function generateMetadata({
   params,
@@ -43,6 +45,7 @@ export default async function MoviePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const session = await auth.api.getSession({ headers: await headers() });
   const movie = await getFilmsById(id);
   const director = await getCastById(id);
   const boxOffice = await getBoxOffice(id);
@@ -61,8 +64,8 @@ export default async function MoviePage({
           <div>
             <Poster movie={movie} />
             <div className="mt-4.5 flex flex-col gap-2.5">
-              <FavoriteButton isFav={isFav} id={id} />
-              <WatchButtons id={id} inWatch={inWatch} />
+              <FavoriteButton isFav={isFav} id={id} isLoggedIn={!!session} />
+              <WatchButtons id={id} inWatch={inWatch} isLoggedIn={!!session} />
             </div>
             <BoxOffice boxOffice={boxOffice.items} />
             <FilmFacts facts={facts.items} />

@@ -5,23 +5,31 @@ import { useOptimistic } from "react";
 import { Bookmark, Eye } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { setWatchStatus } from "@/app/(main)/movies/[id]/actions";
+import { useRouter } from "next/navigation";
 
 function WatchButtons({
   id,
   inWatch,
+  isLoggedIn,
 }: {
   id: string;
   inWatch: WatchStatus | null;
+  isLoggedIn: boolean;
 }) {
   const [optimisticWatch, setOptimisticWatch] = useOptimistic<
     WatchStatus | null,
     WatchStatus
   >(inWatch, (current, clicked) => (current === clicked ? null : clicked));
+  const router = useRouter();
   return (
     <>
       <form
         className="contents"
         action={async () => {
+          if (!isLoggedIn) {
+            router.push("/login");
+            return;
+          }
           setOptimisticWatch(WatchStatus.PLANNED);
           await setWatchStatus(id, WatchStatus.PLANNED);
         }}
@@ -45,6 +53,10 @@ function WatchButtons({
       <form
         className="contents"
         action={async () => {
+          if (!isLoggedIn) {
+            router.push("/login");
+            return;
+          }
           setOptimisticWatch(WatchStatus.WATCHED);
           await setWatchStatus(id, WatchStatus.WATCHED);
         }}
