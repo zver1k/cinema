@@ -16,7 +16,7 @@ async function PersonPage({ params }: { params: Promise<{ id: string }> }) {
   const visibleInfo = info.filter((row) => row.value);
   return (
     <div className="flex flex-col">
-      <div className="min-w-0 px-9 pt-8 pb-15">
+      <div className="min-w-0">
         <BackButton />
         <div className="mx-auto grid max-w-300 grid-cols-[minmax(280px,380px)_1fr] gap-12.5">
           <div className="relative aspect-2/3 w-full overflow-hidden rounded-xl">

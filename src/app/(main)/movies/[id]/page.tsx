@@ -55,7 +55,7 @@ export default async function MoviePage({
 
   return (
     <>
-      <div className="min-w-0 px-9 pt-8 pb-15">
+      <div className="min-w-0">
         <BackButton />
         <div className="mx-auto grid max-w-300 grid-cols-[minmax(280px,380px)_1fr] gap-12.5">
           <div>
