@@ -45,16 +45,20 @@ export default async function MoviePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const session = await auth.api.getSession({ headers: await headers() });
-  const movie = await getFilmsById(id);
-  const director = await getCastById(id);
-  const boxOffice = await getBoxOffice(id);
-  const facts = await getFilmFacts(id);
-  const directorName = director.find((c) => c.professionKey === "DIRECTOR");
+  const h = await headers();
+  const [session, movie, director, boxOffice, facts, isFav, inWatch] =
+    await Promise.all([
+      auth.api.getSession({ headers: h }),
+      getFilmsById(id),
+      getCastById(id),
+      getBoxOffice(id),
+      getFilmFacts(id),
+      isFavorite(id),
+      getWatchStatus(id),
+    ]);
 
-  const isFav = await isFavorite(id);
-  const inWatch = await getWatchStatus(id);
   const rating = movie.ratingKinopoisk;
+  const directorName = director.find((c) => c.professionKey === "DIRECTOR");
 
   return (
     <>
