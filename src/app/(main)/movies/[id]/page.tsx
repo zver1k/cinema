@@ -19,6 +19,8 @@ import WatchButtons from "@/app/(main)/movies/[id]/_components/watch-buttons";
 import type { Metadata } from "next";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { Suspense } from "react";
+import { Skeleton } from "@/shared/ui/skeleton";
 
 export async function generateMetadata({
   params,
@@ -71,8 +73,12 @@ export default async function MoviePage({
               <FavoriteButton isFav={isFav} id={id} isLoggedIn={!!session} />
               <WatchButtons id={id} inWatch={inWatch} isLoggedIn={!!session} />
             </div>
-            <BoxOffice boxOffice={boxOffice.items} />
-            <FilmFacts facts={facts.items} />
+            <Suspense fallback={<Skeleton />}>
+              <BoxOffice boxOffice={boxOffice.items} />
+            </Suspense>
+            <Suspense fallback={<Skeleton />}>
+              <FilmFacts facts={facts.items} />
+            </Suspense>
           </div>
           <div className="min-w-0 flex flex-col gap-2">
             <div className="flex gap-2">
@@ -125,10 +131,29 @@ export default async function MoviePage({
                 </p>
               </div>
             )}
-            <StreamChips id={id} />
-            <CastSection id={id} />
-            <ReviewsSection id={id} />
-            <SimilarSection id={id} />
+            <Suspense fallback={<Skeleton />}>
+              <StreamChips id={id} />
+            </Suspense>
+            <Suspense fallback={<Skeleton />}>
+              <CastSection id={id} />
+            </Suspense>
+            <Suspense fallback={<Skeleton />}>
+              <ReviewsSection id={id} />
+            </Suspense>
+            <Suspense
+              fallback={
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <Skeleton
+                      key={i}
+                      className="aspect-2/3 w-full rounded-xl"
+                    />
+                  ))}
+                </div>
+              }
+            >
+              <SimilarSection id={id} />
+            </Suspense>
           </div>
         </div>
       </div>
