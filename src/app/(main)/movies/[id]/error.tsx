@@ -13,7 +13,6 @@ export default function Error({
   unstable_retry: () => void;
 }) {
   useEffect(() => {
-
     console.error(error);
   }, [error]);
   return (
@@ -31,6 +30,11 @@ export default function Error({
         <p className="mb-8 text-muted-foreground">
           Попробуйте загрузить страницу еще раз или вернитесь на главную.
         </p>
+        {error.digest ? (
+          <p className="mb-8 text-muted-foreground">{error.digest}</p>
+        ) : (
+          ""
+        )}
         <div className="flex items-center gap-3">
           <Button onClick={() => unstable_retry()}>
             <RotateCcw />
