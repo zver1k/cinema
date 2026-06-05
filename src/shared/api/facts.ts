@@ -1,18 +1,19 @@
 import { FilmFactsResponse } from "@/shared/types/api.types";
 
-export const getFilmFacts = async (id: string) => {
-  const data = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/v2.2/films/${id}/facts`,
-    {
-      headers: {
-        "X-API-KEY": process.env.API_KEY!,
+export const getFilmFacts = async (id: string): Promise<FilmFactsResponse> => {
+  try {
+    const response = await fetch(
+      `${process.env.API_URL}/api/v2.2/films/${id}/facts`,
+      {
+        headers: {
+          "X-API-KEY": process.env.API_KEY!,
+        },
+        next: { revalidate: 60 * 60 * 24 },
       },
-      next: { revalidate: 60 * 60 * 24 },
-    },
-  );
-  if (data.status === 404 || data.status === 402) return [];
-  if (!data.ok)
-    throw new Error(`Ошибка: ${data.status}, подробнее: ${data.statusText}`);
-  const response: FilmFactsResponse = await data.json();
-  return response.items;
+    );
+    if (!response.ok) return { total: 0, items: [] };
+    return (await response.json()) as FilmFactsResponse;
+  } catch {
+    return { total: 0, items: [] };
+  }
 };

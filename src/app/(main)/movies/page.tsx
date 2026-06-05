@@ -31,7 +31,7 @@ async function MoviesPage({
   const currentPage = Number(page) || 1;
   const activeGenre = Number(genre) || 0;
 
-  const [{ items, totalPages }, { genres }] = await Promise.all([
+  const [{ items, totalPages = 0 }, { genres }] = await Promise.all([
     keyword
       ? getFilmsByKeyword({ keyword, page: currentPage, type })
       : getFilms({

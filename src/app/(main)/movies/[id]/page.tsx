@@ -64,8 +64,8 @@ export default async function MoviePage({
               <FavoriteButton isFav={isFav} id={id} />
               <WatchButtons id={id} inWatch={inWatch} />
             </div>
-            <BoxOffice boxOffice={boxOffice} />
-            <FilmFacts facts={facts} />
+            <BoxOffice boxOffice={boxOffice.items} />
+            <FilmFacts facts={facts.items} />
           </div>
           <div className="min-w-0 flex flex-col gap-2">
             <div className="flex gap-2">

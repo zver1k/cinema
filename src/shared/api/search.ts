@@ -13,30 +13,32 @@ export const getFilmsByKeyword = async ({
   if (type && type !== "ALL") params.append("type", type);
   params.append("keyword", keyword.toString());
   params.append("page", page.toString());
-  const data = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/v2.1/films/search-by-keyword?${params.toString()}`,
-    {
-      headers: {
-        "X-API-KEY": process.env.API_KEY!,
+  try {
+    const response = await fetch(
+      `${process.env.API_URL}/api/v2.1/films/search-by-keyword?${params.toString()}`,
+      {
+        headers: {
+          "X-API-KEY": process.env.API_KEY!,
+        },
+        next: { revalidate: 3600 },
       },
-      next: { revalidate: 3600 },
-    },
-  );
-  if (data.status === 402) return { items: [], total: 0, totalPages: 0 };
-  if (!data.ok)
-    throw new Error(`Ошибка: ${data.status}, подробнее: ${data.statusText}`);
-  const response: FilmSearchResponse = await data.json();
-  return {
-    items: response.films.map((f) => ({
-      kinopoiskId: f.filmId,
-      posterUrl: f.posterUrl,
-      nameRu: f.nameRu,
-      nameEn: f.nameEn,
-      nameOriginal: null,
-      ratingKinopoisk: parseFloat(f.rating) || null,
-      genres: f.genres,
-      year: f.year,
-    })),
-    totalPages: response.pagesCount,
-  };
+    );
+    if (!response.ok) return { items: [], totalPages: 0 };
+    const json: FilmSearchResponse = await response.json();
+    return {
+      items: json.films.map((f) => ({
+        kinopoiskId: f.filmId,
+        posterUrl: f.posterUrl,
+        nameRu: f.nameRu,
+        nameEn: f.nameEn,
+        nameOriginal: null,
+        ratingKinopoisk: parseFloat(f.rating) || null,
+        genres: f.genres,
+        year: f.year,
+      })),
+      totalPages: json.pagesCount,
+    };
+  } catch {
+    return { items: [], totalPages: 0 };
+  }
 };

@@ -9,60 +9,63 @@ export const getFilms = async ({
   genreID?: number;
   page?: number;
   type?: string;
-}) => {
+}): Promise<FilmResponse> => {
   const params = new URLSearchParams();
   if (genreID) params.append("genres", genreID.toString());
   if (type) params.append("type", type);
   params.append("page", page.toString());
-  const data = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/v2.2/films?${params.toString()}`,
-    {
-      headers: {
-        "X-API-KEY": process.env.API_KEY!,
+  try {
+    const response = await fetch(
+      `${process.env.API_URL}/api/v2.2/films?${params.toString()}`,
+      {
+        headers: {
+          "X-API-KEY": process.env.API_KEY!,
+        },
+        next: { revalidate: 60 * 60 * 24 },
       },
-      next: { revalidate: 60 * 60 * 24 },
-    },
-  );
-  if (data.status === 402)
+    );
+    if (!response.ok)
+      return { items: [] as FilmResponse["items"], total: 0, totalPages: 0 };
+    return await response.json();
+  } catch {
     return { items: [] as FilmResponse["items"], total: 0, totalPages: 0 };
-  if (!data.ok)
-    throw new Error(`Ошибка: ${data.status}, подробнее: ${data.statusText}`);
-  const response: FilmResponse = await data.json();
-  return response;
+  }
 };
 
-export const getFilmsById = async (id: string) => {
-  const data = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/v2.2/films/${id}`,
-    {
-      headers: {
-        "X-API-KEY": process.env.API_KEY!,
+export const getFilmsById = async (id: string): Promise<FilmDetail> => {
+  try {
+    const response = await fetch(
+      `${process.env.API_URL}/api/v2.2/films/${id}`,
+      {
+        headers: {
+          "X-API-KEY": process.env.API_KEY!,
+        },
+        next: { revalidate: 60 * 60 * 24 },
       },
-      next: { revalidate: 60 * 60 * 24 },
-    },
-  );
-  if (data.status === 404 || data.status === 400 || data.status === 402)
-    return notFound();
-  if (!data.ok)
-    throw new Error(`Ошибка: ${data.status}, подробнее: ${data.statusText}`);
-  const response: FilmDetail = await data.json();
-  return response;
+    );
+    if (!response.ok) notFound();
+    return await response.json();
+  } catch {
+    notFound();
+  }
 };
 
-export const getFilmByIdSafe = async (id: string) => {
-  const data = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/v2.2/films/${id}`,
-    {
-      headers: {
-        "X-API-KEY": process.env.API_KEY!,
+export const getFilmByIdSafe = async (
+  id: string,
+): Promise<FilmDetail | null> => {
+  try {
+    const response = await fetch(
+      `${process.env.API_URL}/api/v2.2/films/${id}`,
+      {
+        headers: {
+          "X-API-KEY": process.env.API_KEY!,
+        },
+        next: { revalidate: 60 * 60 * 24 },
       },
-      next: { revalidate: 60 * 60 * 24 },
-    },
-  );
-  if (data.status === 404 || data.status === 400 || data.status === 402)
+    );
+    if (!response.ok) return null;
+    return await response.json();
+  } catch {
     return null;
-  if (!data.ok)
-    throw new Error(`Ошибка: ${data.status}, подробнее: ${data.statusText}`);
-  const response: FilmDetail = await data.json();
-  return response;
+  }
 };

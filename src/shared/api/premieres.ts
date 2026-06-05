@@ -1,6 +1,6 @@
 import { PremierResponse } from "@/shared/types/api.types";
 
-export const getFilmPremieres = async () => {
+export const getFilmPremieres = async (): Promise<PremierResponse> => {
   const date = new Date();
   const firstDayOfNextMonth = new Date(
     date.getFullYear(),
@@ -14,18 +14,19 @@ export const getFilmPremieres = async () => {
   const month = new Intl.DateTimeFormat("en-US", {
     month: "long",
   }).format(new Date(date.getFullYear(), date.getMonth() + 1, 1));
-  const data = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/v2.2/films/premieres?year=${year}&month=${month}`,
-    {
-      headers: {
-        "X-API-KEY": process.env.API_KEY!,
+  try {
+    const response = await fetch(
+      `${process.env.API_URL}/api/v2.2/films/premieres?year=${year}&month=${month}`,
+      {
+        headers: {
+          "X-API-KEY": process.env.API_KEY!,
+        },
+        next: { revalidate },
       },
-      next: { revalidate },
-    },
-  );
-  if (data.status === 402) return { items: [], total: 0 };
-  if (!data.ok)
-    throw new Error(`Ошибка: ${data.status}, подробнее: ${data.statusText}`);
-  const response: PremierResponse = await data.json();
-  return response;
+    );
+    if (!response.ok) return { items: [], total: 0 };
+    return await response.json();
+  } catch {
+    return { items: [], total: 0 };
+  }
 };
