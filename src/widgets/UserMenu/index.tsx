@@ -15,7 +15,7 @@ function UserMenu() {
   if (error) return <Link href={"/login"}>Авторизация</Link>;
 
   return (
-    <div className="bg-card h-14 flex items-center gap-2 justify-between">
+    <div className="flex h-12 min-w-0 items-center justify-between gap-2 bg-card sm:h-14">
       {session ? (
         <>
           <Link href={"/profile"}>
@@ -29,9 +29,11 @@ function UserMenu() {
               </AvatarFallback>
             </Avatar>
           </Link>
-          <div className="flex flex-col items-center">
+          <div className="hidden min-w-0 flex-col items-center sm:flex">
             <Link href={"/profile"}>
-              <span className="font-bold">{session.user.name}</span>
+              <span className="block max-w-24 truncate font-bold lg:max-w-32">
+                {session.user.name}
+              </span>
             </Link>
             <Button
               size="xs"

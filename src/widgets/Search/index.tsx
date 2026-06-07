@@ -47,7 +47,7 @@ function Search() {
   return (
     <div className="relative w-full">
       <Field>
-        <ButtonGroup>
+        <ButtonGroup className="w-full">
           <Input
             className="bg-card"
             value={value}
@@ -58,6 +58,7 @@ function Search() {
             placeholder="Поиск..."
           />
           <Button
+            className="px-3 sm:px-4"
             onClick={() => router.push(buildTarget(value))}
             variant="outline"
           >

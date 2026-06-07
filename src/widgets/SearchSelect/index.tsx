@@ -32,7 +32,7 @@ function SearchSelect() {
         router.push(target);
       }}
     >
-      <SelectTrigger className="w-40 rounded-full bg-card">
+      <SelectTrigger className="w-full rounded-full bg-card sm:w-40">
         <SelectValue placeholder="Все" />
       </SelectTrigger>
       <SelectContent>

@@ -8,7 +8,7 @@ export default function NewMoviePage() {
     <div className="w-full min-w-0 overflow-hidden">
       <AuroraText
         colors={["#9ca8ab", "#005f5a", "#0092b8"]}
-        className="text-4xl m-2 font-bold"
+        className="m-2 text-3xl font-bold sm:text-4xl"
       >
         Новинки
       </AuroraText>

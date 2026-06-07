@@ -71,8 +71,8 @@ export default async function MoviePage({
     <>
       <div className="min-w-0">
         <BackButton />
-        <div className="mx-auto grid max-w-300 grid-cols-[minmax(280px,380px)_1fr] gap-12.5">
-          <div>
+        <div className="mx-auto grid max-w-300 grid-cols-1 gap-6 lg:grid-cols-[minmax(260px,380px)_1fr] lg:gap-12.5">
+          <div className="mx-auto w-full max-w-95 lg:max-w-none">
             <Poster movie={movie} />
             <div className="mt-4.5 flex flex-col gap-2.5">
               <FavoriteButton isFav={isFav} id={id} isLoggedIn={!!session} />
@@ -86,15 +86,15 @@ export default async function MoviePage({
             </Suspense>
           </div>
           <div className="min-w-0 flex flex-col gap-2">
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               {movie.genres.map((genre) => {
                 return <Badge key={genre.genre}>{genre.genre}</Badge>;
               })}
             </div>
-            <h1 className="mb-1 text-[54px] font-bold leading-[1.02] tracking-tight">
+            <h1 className="mb-1 text-3xl font-bold leading-[1.05] tracking-tight sm:text-4xl lg:text-[54px] lg:leading-[1.02]">
               {movie.nameRu ?? movie.nameEn ?? movie.nameOriginal}
             </h1>
-            <div className="text-ring text-[18px] mb-6">
+            <div className="mb-4 text-base text-ring sm:text-[18px] lg:mb-6">
               {movie.nameOriginal} · {movie.year}
             </div>
             <div className="mb-4.5 flex flex-wrap items-center gap-4.5 text-[14px]">
@@ -124,7 +124,7 @@ export default async function MoviePage({
               )}
             </div>
             {movie.slogan && (
-              <p className="font-light text-2xl border-l-3 pl-4 mb-7">
+              <p className="mb-6 border-l-3 pl-4 text-xl font-light sm:text-2xl lg:mb-7">
                 {movie.slogan}
               </p>
             )}

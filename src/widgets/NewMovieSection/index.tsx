@@ -16,7 +16,7 @@ export async function NewMovieSection() {
   const { items } = await getFilmPremieres();
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
       {items.map((film) => {
         const formattedDate = new Intl.DateTimeFormat("ru-RU", {
           day: "numeric",
@@ -60,7 +60,7 @@ export async function NewMovieSection() {
                   )}
                   <div className="flex flex-col gap-2">
                     <p> Страна:</p>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                       {film.countries.map((country) => {
                         return (
                           <Badge key={country.country}>{country.country}</Badge>
@@ -69,7 +69,7 @@ export async function NewMovieSection() {
                     </div>
                   </div>
                   {film.year && <p>Год производства: {film.year} г.</p>}
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     Премьера в России:
                     <span className="font-semibold">{formattedDate}</span>
                   </div>

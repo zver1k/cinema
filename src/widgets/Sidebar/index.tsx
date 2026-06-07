@@ -7,15 +7,17 @@ import { Separator } from "@/shared/ui/separator";
 
 function Sidebar() {
   return (
-    <aside className="flex w-72 flex-col rounded-4xl bg-card p-6 gap-5">
-      <div>
+    <aside className="flex w-full flex-col gap-4 rounded-3xl bg-card p-3 sm:p-4 lg:w-72 lg:gap-5 lg:rounded-4xl lg:p-6">
+      <div className="min-w-0">
         <SidebarHeader />
         <SidebarMenu />
       </div>
-      <Separator />
-      <Suspense fallback={<SidebarFooterSkeleton />}>
-        <SidebarFooter />
-      </Suspense>
+      <Separator className="hidden lg:block" />
+      <div className="hidden lg:block">
+        <Suspense fallback={<SidebarFooterSkeleton />}>
+          <SidebarFooter />
+        </Suspense>
+      </div>
     </aside>
   );
 }
