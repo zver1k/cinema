@@ -54,8 +54,7 @@ jobs:
           BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
           BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
 
-      # Standalone-сборка не включает static/public и схему prisma — докладываем вручную.
-      # prisma/ + prisma.config.ts нужны на сервере для `migrate deploy`.
+      # Standalone-сборка не включает static/public и prisma — докладываем вручную.
       - name: Prepare standalone bundle
         run: |
           mkdir -p .next/standalone/.next
@@ -63,11 +62,22 @@ jobs:
             cp -r public .next/standalone/public
           fi
           cp -r .next/static .next/standalone/.next/static
+          # Схема + миграции для `prisma migrate deploy` на сервере.
+          # Основной prisma.config.ts импортирует `prisma/config` и `dotenv/config`;
+          # в standalone-релизе этих пакетов нет, поэтому кладём минимальный config
+          # без импортов. Prisma 7 больше не поддерживает datasource.url в schema.
           cp -r prisma .next/standalone/prisma
-          cp prisma.config.ts .next/standalone/prisma.config.ts
-          # prisma.config.ts делает `import "dotenv/config"` — кладём dotenv в бандл,
-          # иначе `prisma migrate deploy` на сервере упадёт с module not found
-          cp -r node_modules/dotenv .next/standalone/node_modules/dotenv
+          cat > .next/standalone/prisma.config.ts <<'EOF'
+          export default {
+            schema: "prisma/schema.prisma",
+            migrations: {
+              path: "prisma/migrations",
+            },
+            datasource: {
+              url: process.env.DATABASE_URL,
+            },
+          };
+          EOF
 
       - name: Package build
         run: tar -czf artifact.tar.gz -C .next/standalone .
@@ -98,7 +108,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          envs: APP_NAME,DEPLOY_BASE,APP_PORT,DATABASE_URL,API_URL,API_KEY,BETTER_AUTH_SECRET,BETTER_AUTH_URL
+          envs: APP_NAME,BUN_VERSION,DEPLOY_BASE,APP_PORT,DATABASE_URL,API_URL,API_KEY,BETTER_AUTH_SECRET,BETTER_AUTH_URL
           script: |
             set -e
 
@@ -115,6 +125,15 @@ jobs:
             mkdir -p $NEW_RELEASE
             tar -xzf /tmp/cinema-deploy/artifact.tar.gz -C $NEW_RELEASE
             rm -f /tmp/cinema-deploy/artifact.tar.gz
+
+            export BUN_INSTALL="${BUN_INSTALL:-$HOME/.bun}"
+            export PATH="$BUN_INSTALL/bin:$PATH"
+            if ! command -v bun >/dev/null 2>&1 || [ "$(bun --version)" != "$BUN_VERSION" ]; then
+              curl -fsSL https://bun.com/install | bash -s "bun-v$BUN_VERSION"
+              export PATH="$BUN_INSTALL/bin:$PATH"
+            fi
+            BUN_BIN=$(command -v bun)
+            bun --version
 
             # shared/.env — единый источник рантайм-переменных, переживает релизы
             cat > $SHARED/.env <<EOF
@@ -133,10 +152,9 @@ jobs:
             . $SHARED/.env
             set +a
 
-            # применяем миграции к проду (driver-адаптер, без Rust-движка).
-            # npx, а не bunx — на сервере есть node (его крутит pm2), bun не гарантирован.
+            # применяем миграции к проду через минимальный prisma.config.ts из релиза.
             cd $NEW_RELEASE
-            npx --yes prisma@7 migrate deploy
+            bunx --bun prisma@7 migrate deploy
 
             ln -sfn $NEW_RELEASE $CURRENT
 
@@ -144,7 +162,7 @@ jobs:
               pm2 delete $APP_NAME
             fi
 
-            pm2 start $CURRENT/server.js --name $APP_NAME --cwd $CURRENT --update-env
+            pm2 start $CURRENT/server.js --name $APP_NAME --cwd $CURRENT --interpreter "$BUN_BIN" --update-env
             pm2 save
 
             # оставляем 5 последних релизов
