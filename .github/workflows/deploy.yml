@@ -132,7 +132,6 @@ jobs:
               curl -fsSL https://bun.com/install | bash -s "bun-v$BUN_VERSION"
               export PATH="$BUN_INSTALL/bin:$PATH"
             fi
-            BUN_BIN=$(command -v bun)
             bun --version
 
             # shared/.env — единый источник рантайм-переменных, переживает релизы
@@ -162,8 +161,16 @@ jobs:
               pm2 delete $APP_NAME
             fi
 
-            pm2 start $CURRENT/server.js --name $APP_NAME --cwd $CURRENT --interpreter "$BUN_BIN" --update-env
+            # Next standalone server.js is still a Node server. Bun handles install/build/migrate;
+            # runtime stays on Node to avoid App Router/RSC streaming hangs behind nginx.
+            pm2 start $CURRENT/server.js --name $APP_NAME --cwd $CURRENT --update-env
             pm2 save
+
+            sleep 3
+            curl --fail --silent --show-error --max-time 20 "http://127.0.0.1:$APP_PORT/" -o /tmp/$APP_NAME-health.html || {
+              pm2 logs $APP_NAME --lines 100 --nostream
+              exit 1
+            }
 
             # оставляем 5 последних релизов
             ls -dt $RELEASES/* | tail -n +6 | xargs -r rm -rf
