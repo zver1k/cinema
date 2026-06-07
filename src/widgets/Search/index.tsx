@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { searchMovies } from "@/widgets/Search/actions";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { Skeleton } from "@/shared/ui/skeleton";
 
 function Search() {
   "use no memo";
@@ -73,9 +74,12 @@ function Search() {
 
         {isOpen && (isLoading || (data?.items && data.items.length > 0)) && (
           <div className="absolute top-full left-0 right-0 z-50 bg-card rounded-b-md shadow-lg flex flex-col">
-            {isLoading && (
-              <p className="px-3 py-2 text-muted-foreground">Загрузка...</p>
-            )}
+            {isLoading &&
+              Array.from({ length: 6 }).map((_, i) => (
+                <div className="px-3 py-2" key={i}>
+                  <Skeleton className="h-5 w-40" />
+                </div>
+              ))}
             {data?.items.map((film) => (
               <Link
                 key={film.kinopoiskId}
