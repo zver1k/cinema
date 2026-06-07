@@ -2,18 +2,26 @@ import { getFilmByIdSafe, getFilmsById } from "@/shared/api/films";
 import { Badge } from "@/shared/ui/badge";
 import BackButton from "@/shared/ui/back-button";
 import RatingBadge from "@/shared/ui/rating-badge";
-import CastSection from "@/app/(main)/movies/[id]/_components/cast-section";
+import CastSection, {
+  CastSectionSkeleton,
+} from "@/app/(main)/movies/[id]/_components/cast-section";
 import ReviewsSection from "@/app/(main)/movies/[id]/_components/reviews-section";
-import StreamChips from "@/app/(main)/movies/[id]/_components/stream-chips";
+import StreamChips, {
+  StreamChipsSkeleton,
+} from "@/app/(main)/movies/[id]/_components/stream-chips";
 import { getCastById } from "@/shared/api/cast";
-import SimilarSection from "@/widgets/SimilarSection";
+import SimilarSection, {
+  SimilarSectionSkeleton,
+} from "@/widgets/SimilarSection";
 import Poster from "@/shared/ui/poster";
 import { isFavorite } from "@/lib/favorites";
 import { getWatchStatus } from "@/lib/watchlist";
-import BoxOffice from "@/app/(main)/movies/[id]/_components/box-office";
-import { getBoxOffice } from "@/shared/api/box-office";
-import { getFilmFacts } from "@/shared/api/facts";
-import FilmFacts from "@/app/(main)/movies/[id]/_components/film-facts";
+import BoxOffice, {
+  BoxOfficeSkeleton,
+} from "@/app/(main)/movies/[id]/_components/box-office";
+import FilmFacts, {
+  FilmFactsSkeleton,
+} from "@/app/(main)/movies/[id]/_components/film-facts";
 import FavoriteButton from "@/app/(main)/movies/[id]/_components/favorite-button";
 import WatchButtons from "@/app/(main)/movies/[id]/_components/watch-buttons";
 import type { Metadata } from "next";
@@ -48,16 +56,13 @@ export default async function MoviePage({
 }) {
   const { id } = await params;
   const h = await headers();
-  const [session, movie, director, boxOffice, facts, isFav, inWatch] =
-    await Promise.all([
-      auth.api.getSession({ headers: h }),
-      getFilmsById(id),
-      getCastById(id),
-      getBoxOffice(id),
-      getFilmFacts(id),
-      isFavorite(id),
-      getWatchStatus(id),
-    ]);
+  const [session, movie, director, isFav, inWatch] = await Promise.all([
+    auth.api.getSession({ headers: h }),
+    getFilmsById(id),
+    getCastById(id),
+    isFavorite(id),
+    getWatchStatus(id),
+  ]);
 
   const rating = movie.ratingKinopoisk;
   const directorName = director.find((c) => c.professionKey === "DIRECTOR");
@@ -73,11 +78,11 @@ export default async function MoviePage({
               <FavoriteButton isFav={isFav} id={id} isLoggedIn={!!session} />
               <WatchButtons id={id} inWatch={inWatch} isLoggedIn={!!session} />
             </div>
-            <Suspense fallback={<Skeleton />}>
-              <BoxOffice boxOffice={boxOffice.items} />
+            <Suspense fallback={<BoxOfficeSkeleton />}>
+              <BoxOffice id={id} />
             </Suspense>
-            <Suspense fallback={<Skeleton />}>
-              <FilmFacts facts={facts.items} />
+            <Suspense fallback={<FilmFactsSkeleton />}>
+              <FilmFacts id={id} />
             </Suspense>
           </div>
           <div className="min-w-0 flex flex-col gap-2">
@@ -131,27 +136,16 @@ export default async function MoviePage({
                 </p>
               </div>
             )}
-            <Suspense fallback={<Skeleton />}>
+            <Suspense fallback={<StreamChipsSkeleton />}>
               <StreamChips id={id} />
             </Suspense>
-            <Suspense fallback={<Skeleton />}>
+            <Suspense fallback={<CastSectionSkeleton />}>
               <CastSection id={id} />
             </Suspense>
             <Suspense fallback={<Skeleton />}>
               <ReviewsSection id={id} />
             </Suspense>
-            <Suspense
-              fallback={
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
-                  {Array.from({ length: 3 }).map((_, i) => (
-                    <Skeleton
-                      key={i}
-                      className="aspect-2/3 w-full rounded-xl"
-                    />
-                  ))}
-                </div>
-              }
-            >
+            <Suspense fallback={<SimilarSectionSkeleton />}>
               <SimilarSection id={id} />
             </Suspense>
           </div>

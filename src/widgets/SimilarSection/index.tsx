@@ -1,6 +1,17 @@
 import CollectionSwiper from "@/shared/ui/collection-swiper";
 import { getSimilarById } from "@/shared/api/similar";
 import { miniSliderBreakpoints } from "@/shared/constants/slider-breakpoints";
+import { Skeleton } from "@/shared/ui/skeleton";
+
+export function SimilarSectionSkeleton() {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <Skeleton key={i} className="aspect-2/3 w-full rounded-xl" />
+      ))}
+    </div>
+  );
+}
 
 async function SimilarSection({ id }: { id: string }) {
   const { items = [] } = await getSimilarById(id);

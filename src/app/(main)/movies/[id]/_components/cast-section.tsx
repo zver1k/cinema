@@ -9,6 +9,30 @@ import {
   AccordionTrigger,
 } from "@/shared/ui/accordion";
 import CastItem from "@/app/(main)/movies/[id]/_components/cast-item";
+import { Skeleton } from "@/shared/ui/skeleton";
+
+export function CastSectionSkeleton() {
+  return (
+    <div className="mb-9">
+      <Skeleton className="h-5 w-32 mb-9" />
+      <div className="flex flex-col gap-2">
+        <Skeleton className="size-20 rounded-full" />
+        <Skeleton className="h-3 w-20" />
+        <Skeleton className="h-3 w-16" />
+      </div>
+      <Skeleton className="h-5 w-32 mb-9 mt-9" />
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(140px,1fr))] gap-4">
+        {Array.from({ length: 10 }).map((_, i) => (
+          <div key={i} className="flex flex-col items-center gap-2">
+            <Skeleton className="size-20 rounded-full" />
+            <Skeleton className="h-3 w-20" />
+            <Skeleton className="h-3 w-16" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 async function CastSection({ id }: { id: string }) {
   const cast = await getCastById(id);

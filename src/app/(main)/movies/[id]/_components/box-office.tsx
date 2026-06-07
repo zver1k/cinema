@@ -6,10 +6,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/ui/table";
-import { BoxOfficeFilm } from "@/shared/types/api.types";
+import { getBoxOffice } from "@/shared/api/box-office";
+import { Skeleton } from "@/shared/ui/skeleton";
 
-function BoxOffice({ boxOffice }: { boxOffice: BoxOfficeFilm[] }) {
-  if (boxOffice.length === 0) return null;
+export function BoxOfficeSkeleton() {
+  return (
+    <div className="mt-4">
+      <Skeleton className="h-5 w-32 mb-3" />
+      <div className="flex flex-col gap-2">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Skeleton key={i} className="h-8 w-full" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+async function BoxOffice({ id }: { id: string }) {
+  const { items } = await getBoxOffice(id);
+  if (items.length === 0) return null;
   const typeLabels: Record<string, string> = {
     BUDGET: "Бюджет",
     RUS: "Сборы в России",
@@ -29,7 +44,7 @@ function BoxOffice({ boxOffice }: { boxOffice: BoxOfficeFilm[] }) {
         </TableHeader>
 
         <TableBody>
-          {boxOffice.map((i) => (
+          {items.map((i) => (
             <TableRow key={i.type}>
               <TableCell className="font-medium">
                 {typeLabels[i.type] ?? i.type}

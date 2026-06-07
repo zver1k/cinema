@@ -1,6 +1,20 @@
 import { getExternalById } from "@/shared/api/external";
 import Image from "next/image";
 import Link from "next/link";
+import { Skeleton } from "@/shared/ui/skeleton";
+
+export function StreamChipsSkeleton() {
+  return (
+    <div className="mb-9">
+      <Skeleton className="h-6 w-32 mb-3.5" />
+      <div className="flex flex-wrap gap-2.5">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Skeleton key={i} className="h-12.5 w-25 rounded-[10px]" />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 async function StreamChips({ id }: { id: string }) {
   const streams = await getExternalById(id);
