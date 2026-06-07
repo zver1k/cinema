@@ -19,7 +19,7 @@ export const sidebarItems = [
   {
     title: "Избранное",
     icon: Heart,
-    href: "/favorites",
+    href: "/profile",
   },
   {
     title: "Профиль",
