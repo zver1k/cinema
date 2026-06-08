@@ -13,7 +13,7 @@ async function AuthSection() {
         {randomItems.map((item) => (
           <Image
             key={item.kinopoiskId}
-            src={item.posterUrlPreview}
+            src={item.posterUrl}
             alt={item.nameRu || item.nameEn || "Постер"}
             width={300}
             height={400}
