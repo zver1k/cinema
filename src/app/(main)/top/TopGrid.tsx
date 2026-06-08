@@ -17,7 +17,7 @@ function TopGrid({
 }) {
   const sentinelRef = useRef<HTMLDivElement>(null);
   const { hasNextPage, fetchNextPage, data } = useInfiniteQuery({
-    queryKey: ["movies", totalPages, type],
+    queryKey: ["top", type],
     queryFn: ({ pageParam }) => fetchTopMovies({ page: pageParam, type }),
     initialData: {
       pages: [{ items: initialItems, totalPages, total: initialItems.length }],
