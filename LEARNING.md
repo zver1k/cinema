@@ -397,6 +397,7 @@
   - `digest?` опционально (`?`), т.к. у *клиентских* ошибок его нет — там и так настоящий `message`.
   - **Грабли:** при выводе digest guard'ить надо **`error.digest`**, а не `error`. `error` приходит всегда (граница без него не рендерится) → `{error && ...}` всегда true → при отсутствии хеша покажет `Код ошибки: undefined`. Правильно: `{error.digest ? \`Код: ${error.digest}\` : ""}`. Юзеру показываем digest как «код для поддержки», а сам `error.message` со страницы лучше убрать (для нас есть `console.error` + серверные логи).
 - **Как тестировать:** граница молчит, пока что-то не кинет `throw`. Вставить временный `throw new Error("...")` в серверный компонент-ребёнок нужного сегмента (у нас — в `MoviesList`, до `await`). В dev поверх рисуется error-overlay с настоящим сообщением, стилизованный фолбэк — под ним. После проверки `throw` убрать.
+- ⚠️ **TS71007 на `unstable_retry` — ложное срабатывание Webstorm (баг на стыке инструментов).** TS-плагин Next в редакторе ругается «Props must be serializable… unstable_retry is not a Server Action» на проп `unstable_retry`, хотя код = пример из официальной доки 16.2 буквально. Проверено: `.next/types/validator.ts` (что реально проверяет `next build`) валидирует **только `page.tsx`**, файлы `error.tsx` не трогает → **билд проходит, CI зелёный**. Краснота идёт от editor-плагина, который ещё не внёс `unstable_retry` в白список. Лечение: **игнорировать** (ничего не сломано); НЕ добавлять `// @ts-expect-error` (билд ошибки не видит → станет «unused expect-error»); крайний вариант ради чистоты редактора — `reset` (плагин его знает, но он только перерисовывает, без перефетча).
 
 ### Водопады данных в RSC (`Promise.all`)
 
@@ -562,6 +563,22 @@ if (isAuthPage && isLoggedIn) {
 - ⚠️ `.env` читается только при старте dev-сервера — после добавления `REVALIDATE_SECRET` **перезапустить**, иначе «всегда 401».
 - Проверка без жжения квоты: эндпоинт сам в API не ходит (только метит тег) → `curl -i "...?secret=X&tag=film-301"` проверяет 401/400/200 бесплатно. Реальный перефетч (и трату квоты) видно только на следующем заходе на `/movies/[id]`.
 
+### `useActionState` + формы на server actions
+
+- **Зачем:** убрать ручной `useState` под pending/ошибки. Хук возвращает три значения: `const [state, formAction, pending] = useActionState(action, initialState)` — `state` (что вернул экшен), `formAction` (обёртка для `<form action={...}>`), `pending` (булево «летит отправка»).
+- ⚠️ **Грабля версии:** импорт из **`react`** (не `react-dom`). Старое имя `useFormState` из `react-dom` в React 19 переименовано в `useActionState` и переехало в `react`. `useFormStatus` — по-прежнему из `react-dom`.
+- ⚠️ **Сигнатура экшена меняется:** под `useActionState` первым аргументом становится `prevState`, а `FormData` уезжает **вторым**: `updateProfile(prevState, formData)`. Забудешь — `formData` будет не тем объектом. (Без `useActionState` экшен брал только `formData`.)
+- **Ошибки — как значение, не `throw`:** `safeParse` (не `parse`) возвращает `{ success, data|error }` и не бросает; при провале `return { error: ... }` → попадает в `state` → форма рисует. Та же философия expected-errors-как-значения, что в загрузчиках (раздел error.tsx).
+  - Сообщение из zod: `result.error.issues[0].message` (берёт текст, заданный в `.min(1, "...")`).
+- **Тип-контракт стейта (иначе TS-боль):** экшен возвращает то `{error}`, то `{success}` → TS выведет **union**, и `state.error` покраснеет на ветке `{success}`. Лечится единым типом в трёх местах: `type FormState = {error?: string; success?: boolean}` → им типизируем `prevState`, явный возврат `Promise<FormState>` и `initialState: FormState = {}`. Тогда стейт всегда одной формы. (Идея «тип — контракт».)
+- **Форма обязана быть клиентским компонентом:** хуки → `"use client"`. `ProfileSettings` жил в серверном `page.tsx` → вынес в `_components/profile-settings.tsx` (`"use client"`), `page.tsx` импортит и чистит мёртвые импорты. В разметке: `<form action={formAction}>` (не голый экшен), `{state.error && <p>…</p>}`, `<Button disabled={pending}>`.
+- **`useFormStatus` (концепция, не делали):** альтернатива `pending` — отдельный хук из `react-dom`, читает статус **ближайшей родительской** `<form>`, поэтому обязан жить в компоненте, **вложенном внутрь** формы (напр. отдельный `<SubmitButton>`), а не в том, что саму `<form>` рендерит. Когда pending и так есть из `useActionState` — избыточен; нужен, если кнопка глубоко вложена и не хочется прокидывать `pending` пропом.
+
+**⚠️ Архитектурная развилка — Better Auth client vs server action (почему «пациент» = профиль, а не логин):**
+- Формы логина/регистрации мутируют через `signIn.email`/`signUp` из `auth-client` — это **клиентский** вызов, НЕ server action. `useActionState` с прогрессив-энхансментом требует server action → пришлось бы переписать на серверный API Better Auth (`auth.api.signInEmail`) + плагин cookies. Много возни не по теме.
+- Форма настроек профиля уже была идеальна: `updateProfile` — настоящий server action (`auth.api.updateUser` на сервере) с `FormData`, и в разметке уже `<form action={updateProfile}>`. Не хватало только pending + валидации + фидбэка — ровно это `useActionState` и добавил. Логин отложен как продвинутый кейс (там вся соль — борьба с client-вызовом).
+- **Вывод:** `useActionState(action, init)` — `action` может быть любой async `(state, formData) => newState`. Server action → бонусом progressive enhancement (форма работает без JS). Клиентская функция → только эргономика стейта, без PE.
+
 ---
 
 ## Дальше по плану
@@ -585,4 +602,5 @@ if (isAuthPage && isLoggedIn) {
 - ~~Страница рецензий `/movies/[id]/reviews`~~ ✅ (грид, пагинация, `generateMetadata`, `ReviewCard`)
 - ~~Vitest — юнит-тесты для утилит~~ ✅ (`getRandomItems`, справочники рецензий)
 - ~~Кэш-теги `revalidateTag` + Route Handler сброса~~ ✅ (загрузчики деталки тег `film-${id}`, `/api/revalidate` с секретом; грабля версии: `revalidateTag(tag,'max')` vs `updateTag`)
+- ~~`useActionState` — форма настроек профиля~~ ✅ (валидация zod как значение, единый `FormState`, pending; импорт из `react`; логин на Better Auth client отложен)
 
