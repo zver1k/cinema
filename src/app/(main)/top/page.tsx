@@ -1,5 +1,5 @@
 import { getCollection } from "@/shared/api/collection";
-import TopGrid from "@/app/(main)/top/TopGrid";
+import TopGrid from "@/app/(main)/top/_components/top-grid";
 import { AuroraText } from "@/shared/ui/aurora-text";
 
 async function TopPage({

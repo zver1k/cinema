@@ -37,7 +37,14 @@ function TopGrid({
   return (
     <>
       <MovieGrid
-        films={data?.pages.flatMap((p) => p.items ?? [])}
+        films={
+          data?.pages
+            .flatMap((p) => p.items ?? [])
+            .filter(
+              (f, i, self) =>
+                self.findIndex((x) => x.kinopoiskId === f.kinopoiskId) === i,
+            ) ?? []
+        }
         view={"grid"}
       />
       <div ref={sentinelRef} />

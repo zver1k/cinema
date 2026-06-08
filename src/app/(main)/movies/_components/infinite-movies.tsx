@@ -31,13 +31,16 @@ function InfiniteMovies({
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = result;
   const films = (data?.pages.flatMap((page) => page.items) ??
     []) as MovieItem[];
-  const unique = films.filter(
-    (film, index, self) =>
-      self.findIndex((f) => f.kinopoiskId === film.kinopoiskId) === index,
-  );
+  const unique =
+    data?.pages
+      .flatMap((p) => p.items ?? [])
+      .filter(
+        (f, i, self) =>
+          self.findIndex((x) => x.kinopoiskId === f.kinopoiskId) === i,
+      ) ?? [];
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && hasNextPage) fetchNextPage();
+      if (entry.isIntersecting && hasNextPage) void fetchNextPage();
     });
     if (sentinelRef.current) observer.observe(sentinelRef.current);
     return () => observer.disconnect();
