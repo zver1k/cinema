@@ -499,6 +499,30 @@ if (isAuthPage && isLoggedIn) {
 
 ---
 
+### Vitest — юнит-тесты
+
+- Устанавливается отдельно: `bun add -d vitest`. Скрипты: `"test": "vitest"`, `"test:ui": "vitest --ui"`.
+- `vitest.config.ts` в корне — нужен для алиаса `@`: `resolve: { alias: { "@": path.resolve(__dirname, "./src") } }`. Без него тесты не найдут модули по путям `@/shared/...`.
+- Синтаксис как Jest: `describe`, `test`/`it`, `expect`. Импорт из `"vitest"`.
+- Файлы тестов: `*.test.ts` рядом с тестируемым файлом.
+
+**Что легко тестировать — чистые функции:**
+- Принимают аргументы → возвращают результат, без побочных эффектов.
+- Примеры: `getRandomItems`, справочники `reviewTypeStyles`/`reviewTypeText`.
+- Полезные матчеры: `toHaveLength`, `toContain`, `toBeDefined`, `toBeGreaterThan`.
+
+**Что тестировать сложнее (нужны моки):**
+- Server actions — обращаются к БД и сессии.
+- API-загрузчики — делают `fetch` к внешнему API.
+- React-компоненты — нужен jsdom + React Testing Library.
+
+**Типичные проверки для чистой функции:**
+1. Возвращает ожидаемое значение при нормальных данных.
+2. Обрабатывает граничные случаи (`count > array.length`, пустой массив).
+3. Результат содержит только допустимые значения.
+
+---
+
 ### Страница рецензий `/movies/[id]/reviews`
 
 - Стандартный серверный компонент: `Promise.all([getFilmByIdSafe(id), getReviewsById(id, currentPage)])` + пагинация через `?page=`.
@@ -529,4 +553,5 @@ if (isAuthPage && isLoggedIn) {
 - ~~Модалка фильма через parallel + intercepting routes~~ ✅ (`@modal` слот, `(.)movies/[id]` перехватчик, `<a href>` для выхода на полную страницу)
 - ~~Proxy (защита роутов, redirect after login)~~ ✅ (`getSessionCookie` без DB, `matcher` с negative lookahead)
 - ~~Страница рецензий `/movies/[id]/reviews`~~ ✅ (грид, пагинация, `generateMetadata`, `ReviewCard`)
-- Идеи на потом: тестирование (Vitest).
+- ~~Vitest — юнит-тесты для утилит~~ ✅ (`getRandomItems`, справочники рецензий)
+
