@@ -40,7 +40,7 @@ export const getFilmsById = async (id: string): Promise<FilmDetail> => {
         headers: {
           "X-API-KEY": process.env.API_KEY!,
         },
-        next: { revalidate: 60 * 60 * 24 },
+        next: { revalidate: 60 * 60 * 24, tags: [`film-${id}`] },
       },
     );
     if (!response.ok) notFound();
@@ -60,7 +60,7 @@ export const getFilmByIdSafe = async (
         headers: {
           "X-API-KEY": process.env.API_KEY!,
         },
-        next: { revalidate: 60 * 60 * 24 },
+        next: { revalidate: 60 * 60 * 24, tags: [`film-${id}`] },
       },
     );
     if (!response.ok) return null;
