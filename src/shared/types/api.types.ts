@@ -86,7 +86,7 @@ export type MovieItem = {
 export type FilmResponse = {
   total: number;
   totalPages: number;
-  items: Film[];
+  items: MovieItem[];
 };
 
 export type FilmDetail = {

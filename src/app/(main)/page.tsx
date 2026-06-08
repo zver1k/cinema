@@ -10,8 +10,13 @@ export default async function Home() {
         type={"TOP_250_MOVIES"}
         title={"Топ 250 фильмов"}
         eagerFirstImage
+        href={`/top?type=movies`}
       />
-      <CollectionSection type={"TOP_250_TV_SHOWS"} title={"Топ 250 сериалов"} />
+      <CollectionSection
+        type={"TOP_250_TV_SHOWS"}
+        title={"Топ 250 сериалов"}
+        href={`/top?type=tv-shows`}
+      />
     </div>
   );
 }
