@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 const schema = z.object({
-  name: z.string().min(1, "Имя не должно быть пустым"),
+  name: z.string().trim().min(1, "Имя не должно быть пустым"),
 });
 
 export type FormState = { error?: string; success?: boolean };
@@ -21,7 +21,7 @@ export async function updateProfile(
     return { error: result.error.issues[0].message };
   }
   await auth.api.updateUser({
-    body: { name },
+    body: { name: result.data.name },
     headers: await headers(),
   });
   revalidatePath("/profile");

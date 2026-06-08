@@ -35,9 +35,7 @@ export default function ProfileSettings({
               <div className="grid gap-2">
                 <Label>Никнейм</Label>
                 <Input id="name" name="name" type="text" defaultValue={name} />
-                {state.error && (
-                  <p className="text-sm text-red-500">{state.error}</p>
-                )}
+                <p className="min-h-5 text-sm text-red-500">{state.error}</p>
               </div>
               <div className="grid gap-2">
                 <Label>Email</Label>
@@ -47,6 +45,7 @@ export default function ProfileSettings({
                   type="email"
                   defaultValue={email}
                 />
+                <p className="min-h-5 text-sm text-red-500" />
               </div>
             </CardContent>
           </Card>
