@@ -4,7 +4,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 
-import { Film, SimilarFilm } from "@/shared/types/api.types";
+import { Film, MovieItem, SimilarFilm } from "@/shared/types/api.types";
 import FilmCard from "@/shared/ui/film-card";
 import { Pagination, Navigation } from "swiper/modules";
 import Link from "next/link";
@@ -16,7 +16,7 @@ function CollectionSwiper({
   eagerFirstImage = false,
   breakpoints = sliderBreakpoints,
 }: {
-  items: Film[] | SimilarFilm[];
+  items: Film[] | SimilarFilm[] | MovieItem[];
   eagerFirstImage?: boolean;
   breakpoints?: SwiperOptions["breakpoints"];
 }) {
