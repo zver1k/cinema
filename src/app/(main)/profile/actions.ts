@@ -3,12 +3,27 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
-export async function updateProfile(formData: FormData) {
+const schema = z.object({
+  name: z.string().min(1, "Имя не должно быть пустым"),
+});
+
+export type FormState = { error?: string; success?: boolean };
+
+export async function updateProfile(
+  prevState: FormState,
+  formData: FormData,
+): Promise<FormState> {
   const name = formData.get("name") as string;
+  const result = schema.safeParse({ name });
+  if (!result.success) {
+    return { error: result.error.issues[0].message };
+  }
   await auth.api.updateUser({
     body: { name },
     headers: await headers(),
   });
   revalidatePath("/profile");
+  return { success: true };
 }

@@ -1,25 +1,11 @@
 import Link from "next/link";
-import {
-  Bell,
-  Bookmark,
-  Check,
-  Eye,
-  Heart,
-  LockKeyhole,
-  LogOut,
-  Pencil,
-  User,
-} from "lucide-react";
+import { Bookmark, Eye, Heart, Pencil } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";
 import { Button } from "@/shared/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
-import { Input } from "@/shared/ui/input";
-import { Label } from "@/shared/ui/label";
 import { cn } from "@/shared/lib/utils";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { updateProfile } from "@/app/(main)/profile/actions";
 import { getFavoriteMovies, getFavoritesCount } from "@/lib/favorites";
 import { getWatchListCount, getWatchListMovies } from "@/lib/watchlist";
 import { WatchStatus } from "@/generated/prisma/enums";
@@ -28,6 +14,7 @@ import { ProfileTab } from "@/shared/types/profile.types";
 import { SortKey } from "@/shared/types/search.types";
 import { sortSet } from "@/shared/constants/sorts";
 import ProfileMovies from "@/app/(main)/profile/_components/ProfileMovies";
+import ProfileSettings from "@/app/(main)/profile/_components/profile-settings";
 
 const tabs: Array<{ id: ProfileTab; label: string }> = [
   { id: "favorites", label: "Избранное" },
@@ -196,97 +183,5 @@ function ProfileTabs({ activeTab }: { activeTab: ProfileTab }) {
         </Button>
       ))}
     </nav>
-  );
-}
-
-function ProfileSettings({ name, email }: { name: string; email: string }) {
-  return (
-    <form action={updateProfile}>
-      <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="flex flex-col gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <User size={18} />
-                Аккаунт
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-4 sm:grid-cols-2">
-              <div className="grid gap-2">
-                <Label>Никнейм</Label>
-                <Input id="name" name="name" type="text" defaultValue={name} />
-              </div>
-              <div className="grid gap-2">
-                <Label>Email</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  defaultValue={email}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <Bell size={18} />
-                Уведомления
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-3">
-              <SettingsToggle label="Премьеры в подборках" />
-              <SettingsToggle label="Новые оценки у друзей" />
-              <SettingsToggle label="Еженедельная рассылка" />
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="flex flex-col gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <LockKeyhole size={18} />
-                Приватность
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-3">
-              <SettingsToggle label="Показывать избранное" />
-              <SettingsToggle label="Показывать оценки" />
-              <SettingsToggle label="Скрыть просмотренные" />
-            </CardContent>
-          </Card>
-
-          <Card className="gap-4">
-            <CardContent className="flex flex-col gap-3 pt-6">
-              <Button type="submit">
-                <Check size={16} />
-                Сохранить изменения
-              </Button>
-              <Button variant="destructive">
-                <LogOut size={16} />
-                Выйти из аккаунта
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-    </form>
-  );
-}
-
-function SettingsToggle({ label }: { label: string }) {
-  return (
-    <div className="flex items-center justify-between gap-4 rounded-3xl bg-muted/50 p-3">
-      <span className="text-sm">{label}</span>
-      <button
-        aria-pressed={false}
-        className="relative h-6 w-11 rounded-full bg-input transition"
-        type="button"
-      >
-        <span className="absolute left-1 top-1 size-4 rounded-full bg-white transition" />
-      </button>
-    </div>
   );
 }
