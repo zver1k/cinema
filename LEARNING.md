@@ -462,6 +462,54 @@
 
 ---
 
+### Proxy (ранее Middleware)
+
+- В этой версии Next.js `middleware.ts` переименован в `proxy.ts`, функция — `proxy()`. Концепция та же, файл называется иначе. Миграция: `npx @next/codemod@canary middleware-to-proxy .`
+- Файл лежит в `src/` рядом с `app/`. Экспортирует функцию `proxy` и опциональный `config`.
+- Запускается **до рендера** — до layout, до page, до всего. Принимает `NextRequest`, возвращает `NextResponse.redirect(...)`, `NextResponse.rewrite(...)` или `NextResponse.next()`.
+
+**Главная ловушка — DB-вызовы в proxy:**
+- Proxy срабатывает на каждый запрос, включая prefetch от `<Link>` (наведение курсора на ссылку). DB-вызов на каждый prefetch = катастрофа.
+- Правило: в proxy только **оптимистичная проверка** — читай куку, не ходи в БД. Настоящая проверка сессии — в страницах (где `auth.api.getSession()` и так вызывается).
+- Better Auth даёт `getSessionCookie(request)` из `"better-auth/cookies"` — читает токен сессии из куки синхронно, без сети и БД. `!!sessionCookie` — достаточно для proxy.
+- `async` нужен в сигнатуре только если есть `await` внутри. Синхронный proxy не должен быть `async`.
+
+**Паттерн защиты роутов + redirect after login:**
+```ts
+const isProtected = protectedRoutes.some((r) => pathname.startsWith(r));
+if (isProtected && !isLoggedIn) {
+  const loginUrl = new URL("/login", request.url);
+  loginUrl.searchParams.set("redirect", pathname);  // запомнить откуда пришёл
+  return NextResponse.redirect(loginUrl);
+}
+// Авторизованный на странице логина → на главную
+if (isAuthPage && isLoggedIn) {
+  return NextResponse.redirect(new URL("/", request.url));
+}
+```
+- Форма логина читает `useSearchParams().get("redirect")` и после входа делает `router.push(redirect || "/")`.
+
+**`matcher`:**
+- Без него proxy отработает на каждый `.png`, `/_next/...` — бессмысленно и медленно.
+- Стандартный негативный lookahead исключает статику и API:
+  ```ts
+  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"]
+  ```
+- С широким `matcher` логика «кому куда» живёт внутри функции через `protectedRoutes`/`authRoutes`.
+
+---
+
+### Страница рецензий `/movies/[id]/reviews`
+
+- Стандартный серверный компонент: `Promise.all([getFilmByIdSafe(id), getReviewsById(id, currentPage)])` + пагинация через `?page=`.
+- `generateMetadata` на той же странице — title с контекстом: `Рецензии — Название фильма` (не просто название).
+- **Request Memoization**: `getFilmByIdSafe` вызывается и в `generateMetadata`, и в `ReviewsPage` — Next.js дедуплицирует одинаковые fetch в рамках одного рендера, второй вызов бесплатный.
+- `ReviewCard` — вынесен в `movies/[id]/_components/` (не в `shared/ui/`), потому что используется только внутри этого роута. В `shared` — только когда нужен в нескольких разных роутах.
+- **Сигнал для выноса компонента**: IDE показывает «Duplicated code fragment» — признак что разметка повторяется и пора создавать компонент.
+- Проп компонента — **одна** запись (`review: Reviews`), не массив. Массив перебирается снаружи в `.map`, внутрь едет один элемент.
+
+---
+
 ## Дальше по плану
 - ~~Страница актёра / персоны~~ ✅
 - ~~Автокомплит-поиск на React Query~~ ✅
@@ -479,4 +527,6 @@
 - ~~Довести скелетоны секций деталки + оживить мёртвые `<Suspense>`~~ ✅ (вынес box-office/facts из `Promise.all`, 5 co-located скелетонов, стриминг подтверждён curl'ом)
 - ~~Скелетон загрузки поиска~~ ✅ (НЕ `loading.tsx` — клиентский `useQuery`; скелетон по `isLoading`, не `isFetching`)
 - ~~Модалка фильма через parallel + intercepting routes~~ ✅ (`@modal` слот, `(.)movies/[id]` перехватчик, `<a href>` для выхода на полную страницу)
+- ~~Proxy (защита роутов, redirect after login)~~ ✅ (`getSessionCookie` без DB, `matcher` с negative lookahead)
+- ~~Страница рецензий `/movies/[id]/reviews`~~ ✅ (грид, пагинация, `generateMetadata`, `ReviewCard`)
 - Идеи на потом: тестирование (Vitest).

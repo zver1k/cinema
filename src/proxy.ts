@@ -1,18 +1,36 @@
 import { NextResponse } from "next/server";
-import { headers } from "next/headers";
 import type { NextRequest } from "next/server";
-import { auth } from "@/lib/auth";
+import { getSessionCookie } from "better-auth/cookies";
 
-export async function proxy(request: NextRequest) {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) {
+const protectedRoutes = ["/profile"];
+const authRoutes = [
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
+];
+
+export function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const sessionCookie = getSessionCookie(request);
+  const isLoggedIn = !!sessionCookie;
+
+  const isProtected = protectedRoutes.some((r) => pathname.startsWith(r));
+  const isAuthPage = authRoutes.some((r) => pathname.startsWith(r));
+
+  if (isProtected && !isLoggedIn) {
     const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("redirect", request.nextUrl.pathname);
+    loginUrl.searchParams.set("redirect", pathname);
     return NextResponse.redirect(loginUrl);
   }
+
+  if (isAuthPage && isLoggedIn) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: "/profile/:path*",
+  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
 };
