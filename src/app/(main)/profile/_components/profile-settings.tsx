@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
-import { Bell, LockKeyhole, LogOut, Pencil, User } from "lucide-react";
+import { LockKeyhole, LogOut, Pencil, User } from "lucide-react";
 import { Label } from "@/shared/ui/label";
 import { Input } from "@/shared/ui/input";
 import { Button } from "@/shared/ui/button";
