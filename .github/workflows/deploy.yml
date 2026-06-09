@@ -54,6 +54,7 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           API_URL: ${{ secrets.API_URL }}
           API_KEY: ${{ secrets.API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
           BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
 
