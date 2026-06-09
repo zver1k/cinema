@@ -106,3 +106,12 @@ model Watchlist {
   @@index([userId])
   @@map("watchlist")
 }
+
+model Announcement {
+  id        String   @id
+  title     String
+  message   String
+  createdAt DateTime @default(now())
+
+  @@map("announcement")
+}
