@@ -1,8 +1,4 @@
 import { getReviewsById } from "@/shared/api/review";
-import dayjs from "dayjs";
-import { ThumbsDown, ThumbsUp } from "lucide-react";
-import { reviewTypeStyles, reviewTypeText } from "@/shared/lib/reviews";
-import { ScrollArea } from "@/shared/ui/scroll-area";
 import BackButton from "@/shared/ui/back-button";
 import { Button } from "@/shared/ui/button";
 import Link from "next/link";

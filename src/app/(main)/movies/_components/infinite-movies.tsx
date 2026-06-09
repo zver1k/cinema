@@ -5,7 +5,6 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { fetchMovies } from "@/app/(main)/movies/actions";
 import MovieGrid from "@/shared/ui/movie-grid";
 import { Button } from "@/shared/ui/button";
-import { MovieItem } from "@/shared/types/api.types";
 import { useEffect, useRef } from "react";
 
 function InfiniteMovies({
@@ -29,8 +28,6 @@ function InfiniteMovies({
       allPages.length < lastPage.totalPages ? allPages.length + 1 : undefined,
   });
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = result;
-  const films = (data?.pages.flatMap((page) => page.items) ??
-    []) as MovieItem[];
   const unique =
     data?.pages
       .flatMap((p) => p.items ?? [])

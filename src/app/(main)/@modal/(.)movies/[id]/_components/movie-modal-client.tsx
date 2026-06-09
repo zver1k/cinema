@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
 import { X } from "lucide-react";
 import type { FilmDetail } from "@/shared/types/api.types";
 import { Badge } from "@/shared/ui/badge";
