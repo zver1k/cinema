@@ -7,9 +7,9 @@ import { SortKey, ViewMode } from "@/shared/types/search.types";
 import { Button } from "@/shared/ui/button";
 import { Grid2X2, ListFilter } from "lucide-react";
 import MovieGrid from "@/shared/ui/movie-grid";
-import EmptyMovieSection from "@/app/(main)/profile/_components/EmptyMovieSection";
+import EmptyMovieSection from "@/app/(main)/profile/_components/empty-movie-section";
 import { emptyStates } from "@/shared/constants/empty";
-import SortSelect from "@/app/(main)/profile/_components/SortSelect";
+import SortSelect from "@/app/(main)/profile/_components/sort-select";
 
 function ProfileMovies({
   films,
