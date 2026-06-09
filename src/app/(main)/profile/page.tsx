@@ -13,7 +13,7 @@ import { FilmDetail } from "@/shared/types/api.types";
 import { ProfileTab } from "@/shared/types/profile.types";
 import { SortKey } from "@/shared/types/search.types";
 import { sortSet } from "@/shared/constants/sorts";
-import ProfileMovies from "@/app/(main)/profile/_components/ProfileMovies";
+import ProfileMovies from "@/app/(main)/profile/_components/profile-movies";
 import ProfileSettings from "@/app/(main)/profile/_components/profile-settings";
 
 const tabs: Array<{ id: ProfileTab; label: string }> = [
@@ -127,10 +127,6 @@ function ProfileHeader({
             </p>
           </div>
         </div>
-        <Button variant="outline" className="w-full sm:w-fit">
-          <Pencil size={16} />
-          Редактировать
-        </Button>
       </div>
 
       <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">

@@ -1,12 +1,22 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
-import { Bell, Check, LockKeyhole, LogOut, User } from "lucide-react";
+import { Bell, LockKeyhole, LogOut, Pencil, User } from "lucide-react";
 import { Label } from "@/shared/ui/label";
 import { Input } from "@/shared/ui/input";
 import { Button } from "@/shared/ui/button";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { FormState, updateProfile } from "@/app/(main)/profile/actions";
+import { changeEmail, signOut } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const newEmail = z.object({
+  email: z.email("Неверный Email"),
+});
 
 export default function ProfileSettings({
   name,
@@ -15,86 +25,137 @@ export default function ProfileSettings({
   name: string;
   email: string;
 }) {
+  const router = useRouter();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(newEmail),
+  });
+
+  const onSubmit = async (formData: z.infer<typeof newEmail>) => {
+    const { data, error } = await changeEmail({
+      newEmail: formData.email,
+      callbackURL: "/profile?tab=settings",
+    });
+    if (error) {
+      toast.error(error.message);
+    }
+    if (data) {
+      toast.success("Успешно!");
+    }
+  };
+
   const initialState: FormState = {};
   const [state, formAction, pending] = useActionState(
     updateProfile,
     initialState,
   );
+  useEffect(() => {
+    if (state.success) toast.success("Новый никнейм сохранён");
+  }, [state]);
   return (
-    <form action={formAction}>
-      <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="flex flex-col gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <User size={18} />
-                Аккаунт
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-4 sm:grid-cols-2">
+    <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="flex flex-col gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <User size={18} />
+              Аккаунт
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-4 sm:grid-cols-2">
+            <form action={formAction}>
               <div className="grid gap-2">
                 <Label>Никнейм</Label>
                 <Input id="name" name="name" type="text" defaultValue={name} />
                 <p className="min-h-5 text-sm text-red-500">{state.error}</p>
               </div>
+              <Button
+                disabled={pending}
+                type="submit"
+                variant="outline"
+                className="w-full sm:w-fit"
+              >
+                <Pencil size={16} />
+                Сменить никнейм
+              </Button>
+            </form>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <div className="grid gap-2">
                 <Label>Email</Label>
                 <Input
+                  {...register("email")}
                   id="email"
-                  name="email"
                   type="email"
                   defaultValue={email}
                 />
-                <p className="min-h-5 text-sm text-red-500" />
+
+                <p className="min-h-5 text-sm text-red-500">
+                  {errors.email?.message}
+                </p>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <Bell size={18} />
-                Уведомления
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-3">
-              <SettingsToggle label="Премьеры в подборках" />
-              <SettingsToggle label="Новые оценки у друзей" />
-              <SettingsToggle label="Еженедельная рассылка" />
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="flex flex-col gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <LockKeyhole size={18} />
-                Приватность
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-3">
-              <SettingsToggle label="Показывать избранное" />
-              <SettingsToggle label="Показывать оценки" />
-              <SettingsToggle label="Скрыть просмотренные" />
-            </CardContent>
-          </Card>
-
-          <Card className="gap-4">
-            <CardContent className="flex flex-col gap-3 pt-6">
-              <Button disabled={pending} type="submit">
-                <Check size={16} />
-                Сохранить изменения
+              <Button
+                disabled={isSubmitting}
+                type="submit"
+                variant="outline"
+                className="w-full sm:w-fit"
+              >
+                <Pencil size={16} />
+                Сменить Email
               </Button>
-              <Button disabled={pending} variant="destructive">
-                <LogOut size={16} />
-                Выйти из аккаунта
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-    </form>
+            </form>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <Bell size={18} />
+              Уведомления
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-3">
+            <SettingsToggle label="Премьеры в подборках" />
+            <SettingsToggle label="Новые оценки у друзей" />
+            <SettingsToggle label="Еженедельная рассылка" />
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="flex flex-col gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <LockKeyhole size={18} />
+              Приватность
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-3">
+            <SettingsToggle label="Показывать избранное" />
+            <SettingsToggle label="Показывать оценки" />
+            <SettingsToggle label="Скрыть просмотренные" />
+          </CardContent>
+        </Card>
+
+        <Card className="gap-4">
+          <CardContent className="text-center pt-6">
+            <Button
+              variant="destructive"
+              onClick={async () => {
+                await signOut();
+                router.push("/");
+              }}
+            >
+              <LogOut size={16} />
+              Выйти из аккаунта
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    </section>
   );
 }
 
