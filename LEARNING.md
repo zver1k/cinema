@@ -619,6 +619,17 @@ if (isAuthPage && isLoggedIn) {
 - ⚠️ **`.min(1)` ≠ «не пусто» (реальный баг сессии):** «ввёл пустое имя, а сохранилось». Лог показал `name = " "` — в поле был **пробел**, а `z.string().min(1)` проверяет **длину**, пробел = символ → длина 1 → прошло. Чинит `.trim()` ПЕРЕД `.min(1)`: `z.string().trim().min(1, "...")` (trim — трансформация, режет пробелы, потом проверка длины уже обрезанного). И сохранять **трансформированное** значение `result.data.name`, а не сырой `formData.get("name")` (иначе запишешь пробелы по краям). Мораль: для «непустое» — всегда trim; `.min(1)` без него ловит только реально пустую строку.
 - ⚠️ **Layout shift от условной ошибки:** `{state.error && <p>…</p>}` — пока ошибки нет, `<p>` нет в DOM → появилась → вставляется → всё дёргается. Фикс — **резервировать место**: рендерить `<p>` всегда, текст по условию внутри: `<p className="min-h-5 text-sm text-red-500">{state.error}</p>` (`min-h-5` держит высоту строки `text-sm`). Та же идея «резервируй место», что в скелетонах. ⚠️ И симметрия грида: добавил слот в одну ячейку (`name`) — добавь и в соседнюю (`email`), пустой `<p className="min-h-5"/>`, иначе колонки разъедутся (соседние grid-ячейки выравниваются по содержимому).
 
+### `react-hook-form` + кросс-полевая валидация (`refine`)
+
+- **`useForm({ resolver: zodResolver(schema) })`** — подключает zod к RHF. `register("field")` возвращает пропы для `<Input>`, `handleSubmit(fn)` — обёртку для `onSubmit`. `formState.errors.field?.message` — сообщение ошибки.
+- **Два `useForm` на одной странице** — нормально, каждый независим. Деструктуризацию переименовать: `const { register: registerEmail, handleSubmit: handleSubmitEmail, formState: { errors: emailErrors } } = useForm(...)` — иначе конфликт имён.
+- **`refine` — кросс-полевая валидация** (зависимость между полями): `.refine(data => data.newPassword === data.confirmPassword, { message: "Пароли не совпадают", path: ["confirmPassword"] })`. `path` указывает на какое поле повесить ошибку. Обычный `.min()`/`.max()` — валидация одного поля, `refine` получает весь объект.
+- **`useActionState` vs `react-hook-form`** — когда что:
+  - `useActionState` → форма отправляет на сервер (`<form action={serverAction}>`), нужен progressive enhancement, мутация требует авторизации/БД. Ошибки возвращаются как значение от сервера.
+  - `react-hook-form` → форма вызывает клиентский API (`changeEmail`, `signIn`), нет server action в цепочке, нужна клиентская мгновенная валидация или кросс-полевые проверки.
+- **Форма GET-сабмитит вместо вызова `onSubmit`** — симптом что JS-обработчик не сработал. Причины: `handleSubmit` не передан (опечатка), React Compiler сломал обработчик. Диагностика: `console.log` в `onSubmit`, при необходимости `"use no memo"` в компоненте.
+- **Несколько `<form>` на странице** — валидны, если не вложены друг в друга. Каждая форма — отдельный `<form>` на своём уровне. Вложенные `<form>` — невалидный HTML.
+
 **⚠️ Архитектурная развилка — Better Auth client vs server action (почему «пациент» = профиль, а не логин):**
 - Формы логина/регистрации мутируют через `signIn.email`/`signUp` из `auth-client` — это **клиентский** вызов, НЕ server action. `useActionState` с прогрессив-энхансментом требует server action → пришлось бы переписать на серверный API Better Auth (`auth.api.signInEmail`) + плагин cookies. Много возни не по теме.
 - Форма настроек профиля уже была идеальна: `updateProfile` — настоящий server action (`auth.api.updateUser` на сервере) с `FormData`, и в разметке уже `<form action={updateProfile}>`. Не хватало только pending + валидации + фидбэка — ровно это `useActionState` и добавил. Логин отложен как продвинутый кейс (там вся соль — борьба с client-вызовом).
@@ -648,4 +659,6 @@ if (isAuthPage && isLoggedIn) {
 - ~~Vitest — юнит-тесты для утилит~~ ✅ (`getRandomItems`, справочники рецензий)
 - ~~Кэш-теги `revalidateTag` + Route Handler сброса~~ ✅ (загрузчики деталки тег `film-${id}`, `/api/revalidate` с секретом; грабля версии: `revalidateTag(tag,'max')` vs `updateTag`)
 - ~~`useActionState` — форма настроек профиля~~ ✅ (валидация zod как значение, единый `FormState`, pending; импорт из `react`; логин на Better Auth client отложен)
+- ~~Настройки профиля: logout, смена email, смена пароля~~ ✅ (Resend, `changeEmail`/`changePassword` из auth-client, `react-hook-form` + `refine` для кросс-полевой валидации, несколько форм на странице)
+- ~~`error.tsx` на уровне `app/`~~ ✅ (глобальная граница ошибок для всего приложения, включая недоступность БД)
 
