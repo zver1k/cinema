@@ -7,7 +7,7 @@ import { Input } from "@/shared/ui/input";
 import { Button } from "@/shared/ui/button";
 import { useActionState, useEffect } from "react";
 import { FormState, updateProfile } from "@/app/(main)/profile/actions";
-import { changeEmail, signOut } from "@/lib/auth-client";
+import { changeEmail, changePassword, signOut } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -17,6 +17,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 const newEmail = z.object({
   email: z.email("Неверный Email"),
 });
+
+const newPassword = z
+  .object({
+    currentPassword: z.string().min(1, "Введите текущий пароль"),
+    newPassword: z.string().min(8, "Минимум 8 символов"),
+    confirmPassword: z.string(),
+  })
+  .refine((d) => d.newPassword === d.confirmPassword, {
+    message: "Пароли не совпадают",
+    path: ["confirmPassword"],
+  });
 
 export default function ProfileSettings({
   name,
@@ -28,17 +39,38 @@ export default function ProfileSettings({
   const router = useRouter();
 
   const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
+    register: registerEmail,
+    handleSubmit: handleSubmitEmail,
+    formState: { errors: emailErrors, isSubmitting: isEmailSubmitting },
   } = useForm({
     resolver: zodResolver(newEmail),
   });
 
-  const onSubmit = async (formData: z.infer<typeof newEmail>) => {
+  const {
+    register: registerPassword,
+    handleSubmit: handleSubmitPassword,
+    formState: { errors: passwordErrors, isSubmitting: isPasswordSubmitting },
+  } = useForm({
+    resolver: zodResolver(newPassword),
+  });
+
+  const onSubmitEmail = async (formData: z.infer<typeof newEmail>) => {
     const { data, error } = await changeEmail({
       newEmail: formData.email,
       callbackURL: "/profile?tab=settings",
+    });
+    if (error) {
+      toast.error(error.message);
+    }
+    if (data) {
+      toast.success("Успешно!");
+    }
+  };
+
+  const onSubmitPassword = async (formData: z.infer<typeof newPassword>) => {
+    const { data, error } = await changePassword({
+      currentPassword: formData.currentPassword,
+      newPassword: formData.newPassword,
     });
     if (error) {
       toast.error(error.message);
@@ -83,22 +115,22 @@ export default function ProfileSettings({
                 Сменить никнейм
               </Button>
             </form>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmitEmail(onSubmitEmail)}>
               <div className="grid gap-2">
                 <Label>Email</Label>
                 <Input
-                  {...register("email")}
+                  {...registerEmail("email")}
                   id="email"
                   type="email"
                   defaultValue={email}
                 />
 
                 <p className="min-h-5 text-sm text-red-500">
-                  {errors.email?.message}
+                  {emailErrors.email?.message}
                 </p>
               </div>
               <Button
-                disabled={isSubmitting}
+                disabled={isEmailSubmitting}
                 type="submit"
                 variant="outline"
                 className="w-full sm:w-fit"
@@ -109,18 +141,54 @@ export default function ProfileSettings({
             </form>
           </CardContent>
         </Card>
-
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-xl">
-              <Bell size={18} />
-              Уведомления
+              <LockKeyhole size={18} />
+              Безопасность
             </CardTitle>
           </CardHeader>
-          <CardContent className="grid gap-3">
-            <SettingsToggle label="Премьеры в подборках" />
-            <SettingsToggle label="Новые оценки у друзей" />
-            <SettingsToggle label="Еженедельная рассылка" />
+          <CardContent className="grid gap-4 sm:grid-cols-2">
+            <form onSubmit={handleSubmitPassword(onSubmitPassword)}>
+              <div className="grid gap-2">
+                <Label>Текущий пароль</Label>
+                <Input
+                  {...registerPassword("currentPassword")}
+                  id="currentPassword"
+                  type="password"
+                />
+                <p className="min-h-5 text-sm text-red-500">
+                  {passwordErrors.currentPassword?.message}
+                </p>
+                <Label>Новый пароль</Label>
+                <Input
+                  {...registerPassword("newPassword")}
+                  id="newPassword"
+                  type="password"
+                />
+                <p className="min-h-5 text-sm text-red-500">
+                  {passwordErrors.newPassword?.message}
+                </p>
+                <Label>Подтвердите пароль</Label>
+                <Input
+                  {...registerPassword("confirmPassword")}
+                  id="confirmPassword"
+                  type="password"
+                />
+                <p className="min-h-5 text-sm text-red-500">
+                  {passwordErrors.confirmPassword?.message}
+                </p>
+              </div>
+              <Button
+                disabled={isPasswordSubmitting}
+                type="submit"
+                variant="outline"
+                className="w-full sm:w-fit"
+              >
+                <Pencil size={16} />
+                Сменить пароль
+              </Button>
+            </form>
           </CardContent>
         </Card>
       </div>
