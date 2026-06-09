@@ -40,7 +40,7 @@ function InfiniteGrid({ items }: { items: Premier[] }) {
               key={film.kinopoiskId}
               className="relative mx-auto w-full max-w-sm pt-0"
             >
-              <div className="relative aspect-2/3 w-full overflow-hidden rounded-t-xl">
+              <div className="relative aspect-2/3 w-full overflow-hidden rounded-xl">
                 <Link href={`/movies/${film.kinopoiskId}`}>
                   <PosterImage
                     alt={film.nameRu || film.nameEn || ""}

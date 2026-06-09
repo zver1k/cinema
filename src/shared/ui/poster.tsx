@@ -3,7 +3,7 @@ import PosterImage from "@/shared/ui/poster-image";
 
 function Poster({ movie }: { movie: FilmDetail }) {
   return (
-    <div className="relative aspect-2/3 w-full overflow-hidden rounded-t-xl">
+    <div className="relative aspect-2/3 w-full overflow-hidden rounded-xl">
       <PosterImage
         src={movie.posterUrl}
         alt={movie.nameRu ?? movie.nameEn ?? "Логотип"}

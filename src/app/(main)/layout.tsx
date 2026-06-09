@@ -15,7 +15,7 @@ export default function MainLayout({
         <Sidebar />
         <div className="flex min-w-0 flex-1 flex-col gap-3 lg:gap-4">
           <Header />
-          <main className="flex-1 rounded-3xl bg-card p-3 sm:p-4 lg:rounded-4xl lg:p-6">
+          <main className="flex-1 bg-card p-2 sm:p-3 lg:rounded-4xl lg:p-4">
             {children}
           </main>
         </div>

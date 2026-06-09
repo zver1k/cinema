@@ -30,7 +30,7 @@ async function SidebarFooter() {
             key={film.kinopoiskId}
             className="flex items-center gap-3 cursor-pointer group"
           >
-            <div className="relative h-16 w-12 overflow-hidden rounded-t-xl">
+            <div className="relative h-16 w-12 overflow-hidden rounded-xl">
               <PosterImage
                 alt={film.nameRu || film.nameEn || ""}
                 src={film.posterUrlPreview}
