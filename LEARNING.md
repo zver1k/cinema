@@ -551,6 +551,49 @@ if (isAuthPage && isLoggedIn) {
 - `'max'` — обязательный второй аргумент `revalidateTag` (без него = legacy = deprecated). `updateTag` завезли отдельно для «я сам изменил — покажи сразу», но он **только в экшене** (в Route Handler кинет ошибку).
 - **Честная граница применимости:** учебниковый триггер «создал пост → сбрось список» у нас **не работает** — фильмы read-only внешний API, а избранное/watchlist в локальной БД (их в Data Cache нет). Поэтому `updateTag` после `toggleFavorite` бессмыслен (нечего инвалидировать). Реальный наш сценарий — **сброс по требованию** (залипший фильм), а он живёт в Route Handler → значит `revalidateTag(tag, 'max')`, не `updateTag`.
 
+---
+
+### Настройки профиля: logout, тост, смена email
+
+**Logout:**
+- `signOut()` из `better-auth/react` — асинхронный клиентский вызов. Всегда `await signOut()` перед `router.push("/")` — иначе редирект случится до удаления куки, и proxy пустит как залогиненного.
+- Кнопка выхода обязана иметь `type="button"` если находится внутри `<form>` — иначе сабмитит форму.
+
+**Success-тост после server action (`useActionState`):**
+- `useEffect(() => { if (state.success) toast.success(...) }, [state])` — зависимость `[state]` (объект), не `[state.success]` (примитив). При двух успешных сабмитах `state.success` оба раза `true`, но объект `state` каждый раз новый → эффект сработает оба раза. С `[state.success]` второй тост не покажется.
+- Проверка `if (state.success)` обязательна — `state` меняется и при ошибке валидации.
+
+**Несколько форм на странице:**
+- Вложенные `<form>` — невалидный HTML, браузер не поддерживает. Каждая форма — отдельный `<form>` на своём уровне.
+- Когда операции семантически разные (имя меняется мгновенно, email требует верификации) — отдельные формы с отдельными кнопками. Одна кнопка «Сохранить всё» смешивает синхронную и асинхронную операции → непонятный UX.
+
+**Смена email через Better Auth + Resend:**
+- `changeEmail` — клиентский вызов (`authClient.changeEmail`), не server action. Принимает `{ newEmail, callbackURL? }`.
+- Правильная структура конфига `betterAuth`:
+  ```ts
+  betterAuth({
+    user: {
+      changeEmail: {
+        enabled: true,
+        sendChangeEmailConfirmation: async ({ user, newEmail, url }) => {
+          // письмо на СТАРЫЙ email — "вы запросили смену"
+        },
+      },
+    },
+    emailVerification: {
+      sendVerificationEmail: async ({ user, url }) => {
+        // письмо на НОВЫЙ email — "подтвердите владение"
+      },
+    },
+    emailAndPassword: { ... },
+    secret: ...,
+  })
+  ```
+- `sendChangeEmailConfirmation` — в `user.changeEmail` (подтверждение от старого владельца, срабатывает если `emailVerified: true`). `sendVerificationEmail` — в `emailVerification` (верификация нового адреса).
+- ⚠️ `emailVerification`, `emailAndPassword`, `secret` — на **верхнем уровне** `betterAuth({})`, не внутри `user: {}`. Лёгкая ошибка при рефакторинге.
+- ⚠️ Resend `from: "onboarding@resend.dev"` работает только для отправки **на email твоего Resend-аккаунта** (тестовый режим). На любой другой адрес — верифицировать домен в Resend и использовать `from: "noreply@твой-домен.ru"`.
+- ⚠️ «Unused property» в Webstorm на коллбэках конфига — ложное срабатывание IDE (она думает что функция нигде не вызывается). Реальные ошибки — только в `npm run lint` и билде.
+
 **Route Handler (`route.ts`) — новое для проекта:**
 - Файл `app/api/<seg>/route.ts` экспортирует **функции под HTTP-методы** (`export async function GET(request: NextRequest)`), а НЕ default-компонент. `route.ts` и `page.tsx` в одном сегменте несовместимы. GET по умолчанию **не кэшируется** (нам и надо).
 - ⚠️ **`searchParams` тут НЕ Promise** (в отличие от страниц): `request.nextUrl.searchParams.get("tag")` — синхронно, без `await`. Разные механизмы: страница — серверный компонент с отложенным рендером, Route Handler — обычный Web Request.
