@@ -40,6 +40,7 @@ function strengthPassword(password: string): number {
 }
 
 function RegisterForm() {
+  "use no memo";
   const [showPassword, setShowPassword] = useState(false);
   const {
     register,
