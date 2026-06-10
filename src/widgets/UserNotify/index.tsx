@@ -18,10 +18,21 @@ function UserNotify({ announcements }: { announcements: Announcement[] }) {
     setUnreadCount(unread);
   }, [announcements]);
 
+  function toggleUnreadCount() {
+    if (!isOpen) {
+      setUnreadCount(0);
+      const lastUnread = announcements[0]?.createdAt;
+      if (lastUnread) {
+        localStorage.setItem(STORAGE_KEY, new Date(lastUnread).toISOString());
+      }
+    }
+    setIsOpen(!isOpen);
+  }
+
   return (
     <div className="relative">
       <button
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={toggleUnreadCount}
         className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white/10 bg-card transition-all duration-200 hover:scale-105 hover:bg-mist-700 sm:h-14 sm:w-14"
       >
         <Bell className="size-5 transition-colors hover:text-primary" />
