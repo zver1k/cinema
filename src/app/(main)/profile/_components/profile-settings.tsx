@@ -91,7 +91,7 @@ export default function ProfileSettings({
   return (
     <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
       <div className="flex flex-col gap-4">
-        <Card>
+        <Card className="p-3">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-xl">
               <User size={18} />
@@ -141,7 +141,7 @@ export default function ProfileSettings({
             </form>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="p-3">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-xl">
               <LockKeyhole size={18} />
@@ -194,7 +194,7 @@ export default function ProfileSettings({
       </div>
 
       <div className="flex flex-col gap-4">
-        <Card>
+        <Card className="p-3">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-xl">
               <LockKeyhole size={18} />
@@ -208,8 +208,8 @@ export default function ProfileSettings({
           </CardContent>
         </Card>
 
-        <Card className="gap-4">
-          <CardContent className="text-center pt-6">
+        <Card className="gap-4 p-3">
+          <CardContent className="text-center p-6">
             <Button
               variant="destructive"
               onClick={async () => {
