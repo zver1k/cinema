@@ -16,12 +16,11 @@ function FilmCard({
     <Card className="relative w-full pt-0 overflow-hidden transition hover:scale-103">
       <div className="relative aspect-2/3 w-full overflow-hidden">
         <Image
-          src={film.posterUrl}
+          src={film.posterUrlPreview}
           alt={film.nameRu ?? film.nameEn ?? "Логотип"}
           fill
           sizes="(max-width: 639px) calc(100vw), (max-width: 767px) calc((100vw - 10px) / 2), (max-width: 1023px) calc((100vw - 350px) / 4), calc((100vw - 370px) / 6)"
           loading={eager ? "eager" : undefined}
-          unoptimized
           className="object-cover"
         />
         <div className="absolute top-2 left-2">

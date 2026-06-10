@@ -29,6 +29,7 @@ export const getFilmsByKeyword = async ({
       items: json.films.map((f) => ({
         kinopoiskId: f.filmId,
         posterUrl: f.posterUrl,
+        posterUrlPreview: f.posterUrlPreview,
         nameRu: f.nameRu,
         nameEn: f.nameEn,
         nameOriginal: null,

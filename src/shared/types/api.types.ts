@@ -73,6 +73,7 @@ export type Film = {
 export type MovieItem = {
   kinopoiskId: number;
   posterUrl: string;
+  posterUrlPreview: string;
   nameRu: string | null;
   nameEn: string | null;
   nameOriginal: string | null;
