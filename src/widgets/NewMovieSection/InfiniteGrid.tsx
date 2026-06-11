@@ -38,7 +38,7 @@ function InfiniteGrid({ items }: { items: Premier[] }) {
           return (
             <Card
               key={film.kinopoiskId}
-              className="relative mx-auto w-full max-w-sm pt-0"
+              className="relative mx-auto flex h-full w-full max-w-sm flex-col pt-0"
             >
               <div className="relative aspect-2/3 w-full overflow-hidden rounded-xl">
                 <Link href={`/movies/${film.kinopoiskId}`}>
@@ -90,7 +90,7 @@ function InfiniteGrid({ items }: { items: Premier[] }) {
                   </div>
                 </CardDescription>
               </CardHeader>
-              <CardFooter>
+              <CardFooter className="mt-auto pb-4">
                 <Button asChild className="w-full">
                   <Link href={`/movies/${film.kinopoiskId}`}>Подробнее</Link>
                 </Button>
