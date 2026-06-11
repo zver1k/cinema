@@ -12,7 +12,7 @@ function MovieCard({ film }: { film: MovieItem }) {
       <Card className="relative w-full py-0 overflow-hidden transition hover:scale-103">
         <div className="relative aspect-2/3 w-full overflow-hidden">
           <PosterImage
-            src={film.posterUrl}
+            src={film.posterUrlPreview}
             alt={film.nameRu ?? film.nameEn ?? "Логотип"}
             sizes="(max-width: 639px) calc(100vw), (max-width: 767px) calc((100vw - 10px) / 2), (max-width: 1023px) calc((100vw - 350px) / 4), calc((100vw - 370px) / 6)"
           />
@@ -33,7 +33,7 @@ function MovieRow({ film }: { film: MovieItem }) {
       <Card className="flex flex-col gap-4 p-4 transition hover:scale-103 sm:flex-row sm:p-6">
         <div className="relative aspect-2/3 w-full shrink-0 overflow-hidden rounded-xl sm:h-60 sm:w-40">
           <PosterImage
-            src={film.posterUrl}
+            src={film.posterUrlPreview}
             alt={film.nameRu ?? film.nameEn ?? "Логотип"}
             sizes="(max-width: 639px) calc(100vw), (max-width: 767px) calc((100vw - 10px) / 2), (max-width: 1023px) calc((100vw - 350px) / 4), calc((100vw - 370px) / 6)"
           />

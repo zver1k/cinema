@@ -25,7 +25,6 @@ function PosterImage({
         fill
         sizes={sizes}
         loading={loading}
-        unoptimized
         className={`object-cover ${errorLoadingImage ? "hidden" : ""}`}
       />
       {errorLoadingImage && (
