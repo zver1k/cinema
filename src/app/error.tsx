@@ -31,7 +31,9 @@ function Error({
           Попробуйте загрузить страницу еще раз или вернитесь на главную.
         </p>
         {error.digest ? (
-          <p className="mb-8 text-muted-foreground">{error.digest}</p>
+          <p className="mb-8 text-muted-foreground">
+            Код ошибки: {error.digest}
+          </p>
         ) : (
           ""
         )}
