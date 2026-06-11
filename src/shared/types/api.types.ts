@@ -96,6 +96,7 @@ export type FilmDetail = {
   nameEn: string | null;
   nameOriginal: string | null;
   posterUrl: string;
+  posterUrlPreview: string;
   ratingKinopoisk: number | null;
   description: string | null;
   filmLength: number | null;
