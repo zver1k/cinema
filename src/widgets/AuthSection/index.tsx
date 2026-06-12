@@ -8,7 +8,6 @@ async function AuthSection() {
   return (
     <div className="relative hidden w-1/2 overflow-hidden lg:block">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,color-mix(in_oklch,var(--primary)_22%,transparent),transparent_40%),linear-gradient(to_bottom,var(--card),var(--background))]" />
-
       <div className="absolute inset-0 grid grid-cols-4 gap-2 p-4 opacity-10">
         {randomItems.map((item) => (
           <Image
@@ -21,7 +20,6 @@ async function AuthSection() {
           />
         ))}
       </div>
-
       <div className="relative z-10 flex h-full items-end p-10">
         <div className="max-w-md">
           <h2 className="text-4xl font-bold leading-tight tracking-tight">
