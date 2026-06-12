@@ -16,6 +16,7 @@ import {
   tabSet,
 } from "@/app/(main)/profile/_components/profile-tabs";
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
 
 export default async function ProfilePage({
   searchParams,
@@ -23,7 +24,7 @@ export default async function ProfilePage({
   searchParams: Promise<{ tab?: string; sort?: string }>;
 }) {
   const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) return null;
+  if (!session) return redirect("/login");
   const { tab, sort } = await searchParams;
   const activeSort = sortSet.has(sort as SortKey) ? (sort as SortKey) : "name";
   const activeTab = tabSet.has(tab as ProfileTab)
