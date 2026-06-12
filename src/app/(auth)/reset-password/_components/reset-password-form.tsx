@@ -3,6 +3,7 @@
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/shared/ui/field";
@@ -63,7 +64,7 @@ function ResetPasswordForm({ token }: { token?: string }) {
               {showPassword ? <EyeOff /> : <Eye />}
             </button>
           </div>
-          <p className="text-sm text-red-500">{errors.password?.message}</p>
+          <FieldError>{errors.password?.message}</FieldError>
           <div className="flex items-center justify-between gap-3">
             <FieldDescription>Минимум 8 символов</FieldDescription>
           </div>

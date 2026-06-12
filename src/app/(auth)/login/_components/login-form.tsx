@@ -3,6 +3,7 @@
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/shared/ui/field";
@@ -55,7 +56,7 @@ function LoginForm() {
         <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
           <Input {...register("email")} id="email" type="email" />
-          <p className="text-sm text-red-500">{errors.email?.message}</p>
+          <FieldError>{errors.email?.message}</FieldError>
         </Field>
 
         <Field>
@@ -75,7 +76,7 @@ function LoginForm() {
               {showPassword ? <EyeOff /> : <Eye />}
             </button>
           </div>
-          <p className="text-sm text-red-500">{errors.password?.message}</p>
+          <FieldError>{errors.password?.message}</FieldError>
           <div className="flex items-center justify-between gap-3">
             <FieldDescription>Минимум 8 символов</FieldDescription>
             <Button asChild variant="link" className="h-auto p-0">

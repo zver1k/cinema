@@ -1,6 +1,6 @@
 "use client";
 
-import { Field, FieldGroup, FieldLabel } from "@/shared/ui/field";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/shared/ui/field";
 import { Input } from "@/shared/ui/input";
 import { Button } from "@/shared/ui/button";
 import { useForm } from "react-hook-form";
@@ -39,7 +39,7 @@ function ForgotForm() {
         <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
           <Input {...register("email")} id="email" type="email" />
-          <p className="text-sm text-red-500">{errors.email?.message}</p>
+          <FieldError>{errors.email?.message}</FieldError>
         </Field>
 
         <Button

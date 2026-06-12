@@ -4,6 +4,7 @@ import {
   Field,
   FieldContent,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/shared/ui/field";
@@ -74,13 +75,13 @@ function RegisterForm() {
           <FieldLabel htmlFor="name">Никнейм</FieldLabel>
           <Input {...register("name")} id="name" type="text" />
           <FieldDescription>3-20 символов, латиница и цифры</FieldDescription>
-          <p className="text-sm text-red-500">{errors.name?.message}</p>
+          <FieldError>{errors.name?.message}</FieldError>
         </Field>
 
         <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
           <Input {...register("email")} id="email" type="email" />
-          <p className="text-sm text-red-500">{errors.email?.message}</p>
+          <FieldError>{errors.email?.message}</FieldError>
         </Field>
 
         <Field>
@@ -100,7 +101,7 @@ function RegisterForm() {
               {showPassword ? <EyeOff /> : <Eye />}
             </button>
           </div>
-          <p className="text-sm text-red-500">{errors.password?.message}</p>
+          <FieldError>{errors.password?.message}</FieldError>
           <div className="flex gap-1">
             <div
               className={`h-1 flex-1 rounded-full ${strength >= 1 ? "bg-red-500" : "bg-muted"}`}
@@ -132,7 +133,7 @@ function RegisterForm() {
             </Label>
           </FieldContent>
         </Field>
-        <p className="text-sm text-red-500">{errors.terms?.message}</p>
+        <FieldError>{errors.terms?.message}</FieldError>
         <Button
           type="submit"
           size="lg"
