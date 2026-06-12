@@ -1,29 +1,47 @@
 "use client";
 import { Bell } from "lucide-react";
 import { Announcement } from "@/generated/prisma/client";
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
+
+const STORAGE_KEY = "announcements_last_seen";
+const STORAGE_EVENT = "local-storage";
+
+function getSnapshot() {
+  return localStorage.getItem(STORAGE_KEY);
+}
+
+function getServerSnapshot() {
+  return null;
+}
+
+function subscribe(callback: () => void) {
+  window.addEventListener("storage", callback);
+  window.addEventListener(STORAGE_EVENT, callback);
+  return () => {
+    window.removeEventListener("storage", callback);
+    window.removeEventListener(STORAGE_EVENT, callback);
+  };
+}
 
 function UserNotify({ announcements }: { announcements: Announcement[] }) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [unreadCount, setUnreadCount] = useState<number>(0);
-  const STORAGE_KEY = "announcements_last_seen";
-
-  useEffect(() => {
-    const lastSeen = localStorage.getItem(STORAGE_KEY);
-    const unread = lastSeen
-      ? announcements.filter(
-          (a) => new Date(a.createdAt).getTime() > new Date(lastSeen).getTime(),
-        ).length
-      : announcements.length;
-    setUnreadCount(unread);
-  }, [announcements]);
+  const lastSeen = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
+  );
+  const unreadCount = lastSeen
+    ? announcements.filter(
+        (a) => new Date(a.createdAt).getTime() > new Date(lastSeen).getTime(),
+      ).length
+    : announcements.length;
 
   function toggleUnreadCount() {
     if (!isOpen) {
-      setUnreadCount(0);
       const lastUnread = announcements[0]?.createdAt;
       if (lastUnread) {
         localStorage.setItem(STORAGE_KEY, new Date(lastUnread).toISOString());
+        window.dispatchEvent(new Event(STORAGE_EVENT));
       }
     }
     setIsOpen(!isOpen);
