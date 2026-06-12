@@ -1,13 +1,14 @@
 import Image from "next/image";
 import { Staff } from "@/shared/types/api.types";
 import Link from "next/link";
+import { filmName } from "@/shared/lib/film-name";
 
 interface CastItemProps {
   member: Staff;
 }
 
 function CastItem({ member }: CastItemProps) {
-  const name = member.nameRu ?? member.nameEn ?? "Без имени";
+  const name = filmName(member, "Без имени");
 
   return (
     <Link href={`/person/${member.staffId}`}>

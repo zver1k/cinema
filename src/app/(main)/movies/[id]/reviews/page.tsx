@@ -5,6 +5,7 @@ import Link from "next/link";
 import { getFilmByIdSafe } from "@/shared/api/films";
 import type { Metadata } from "next";
 import ReviewCard from "@/app/(main)/movies/[id]/_components/review-card";
+import { filmName } from "@/shared/lib/film-name";
 
 export async function generateMetadata({
   params,
@@ -15,10 +16,10 @@ export async function generateMetadata({
   const film = await getFilmByIdSafe(id);
   if (!film) return {};
   return {
-    title: `Рецензии — ${film.nameRu ?? film.nameOriginal ?? "Фильм"}`,
+    title: `Рецензии — ${filmName(film, "Фильм")}`,
     description: film.description,
     openGraph: {
-      title: `Рецензии — ${film.nameRu ?? film.nameOriginal ?? "Фильм"}`,
+      title: `Рецензии — ${filmName(film, "Фильм")}`,
       description: film.description ?? "",
       images: film.posterUrl ? [film.posterUrl] : [],
     },

@@ -29,6 +29,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { Suspense } from "react";
 import { Skeleton } from "@/shared/ui/skeleton";
+import { filmName } from "@/shared/lib/film-name";
 
 export async function generateMetadata({
   params,
@@ -39,10 +40,10 @@ export async function generateMetadata({
   const film = await getFilmByIdSafe(id);
   if (!film) return {};
   return {
-    title: film.nameRu ?? film.nameOriginal ?? "Фильм",
+    title: filmName(film, "Фильм"),
     description: film.description,
     openGraph: {
-      title: film.nameRu ?? film.nameOriginal ?? "Фильм",
+      title: filmName(film, "Фильм"),
       description: film.description ?? "",
       images: film.posterUrl ? [film.posterUrl] : [],
     },
@@ -92,7 +93,7 @@ export default async function MoviePage({
               })}
             </div>
             <h1 className="mb-1 text-3xl font-bold leading-[1.05] tracking-tight sm:text-4xl lg:text-[54px] lg:leading-[1.02]">
-              {movie.nameRu ?? movie.nameEn ?? movie.nameOriginal}
+              {filmName(movie)}
             </h1>
             <div className="mb-4 text-base text-ring sm:text-[18px] lg:mb-6">
               {movie.nameOriginal} · {movie.year}

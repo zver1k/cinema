@@ -3,6 +3,7 @@ import Link from "next/link";
 import { PERSON_ROLE_LABELS } from "@/shared/constants/staff";
 import RatingBadge from "@/shared/ui/rating-badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
+import { filmName } from "@/shared/lib/film-name";
 
 function Filmography({ films }: { films: PersonFilm[] }) {
   if (!films.length) return null;
@@ -52,7 +53,7 @@ function Filmography({ films }: { films: PersonFilm[] }) {
                     href={`/movies/${film.filmId}`}
                     className="min-w-0 text-sm font-medium leading-snug hover:underline sm:text-base"
                   >
-                    {film.nameRu ?? film.nameEn ?? "Без названия"}
+                    {filmName(film)}
                   </Link>
 
                   {film.rating && (

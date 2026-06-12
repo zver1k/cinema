@@ -7,6 +7,7 @@ import { Button } from "@/shared/ui/button";
 import Link from "next/link";
 import { Spinner } from "@/shared/ui/spinner";
 import { useRouter } from "next/navigation";
+import { avatarName } from "@/shared/lib/avatar-fallback";
 
 function UserMenu() {
   const { data: session, isPending, error } = useSession();
@@ -24,9 +25,7 @@ function UserMenu() {
                 src={session.user.image ?? undefined}
                 alt={session.user.name}
               />
-              <AvatarFallback>
-                {session.user.name.toLocaleUpperCase().slice(0, 2)}
-              </AvatarFallback>
+              <AvatarFallback>{avatarName(session.user.name)}</AvatarFallback>
             </Avatar>
           </Link>
           <div className="hidden min-w-0 flex-col items-center sm:flex">
