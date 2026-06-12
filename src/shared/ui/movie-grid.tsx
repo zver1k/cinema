@@ -35,7 +35,7 @@ function MovieRow({ film }: { film: MovieItem }) {
           <PosterImage
             src={film.posterUrlPreview}
             alt={film.nameRu ?? film.nameEn ?? "Логотип"}
-            sizes="(max-width: 639px) calc(100vw), (max-width: 767px) calc((100vw - 10px) / 2), (max-width: 1023px) calc((100vw - 350px) / 4), calc((100vw - 370px) / 6)"
+            sizes="(max-width: 639px) 100vw, 160px"
           />
           <div className="absolute top-2 left-2">
             {film.ratingKinopoisk && (
