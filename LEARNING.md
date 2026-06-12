@@ -805,7 +805,7 @@ if (isAuthPage && isLoggedIn) {
 - ~~Страницы 404 (`not-found.tsx`)~~ ✅ (корневая — несовпавшие URL + фолбэк, `(main)` — `notFound()` персон, деталка фильма была; `<div>` вместо `<main>` внутри layout)
 - ~~Расширить коллекции `/top`~~ ✅ (справочник `{slug,type,title}` в `shared/constants`, `satisfies`, `.find ??` фолбэк, 6 коллекций на главной и `/top`)
 - ~~Довести лёгкие постеры до гридов~~ ✅ (`movie-grid.tsx` ×2 + `InfiniteGrid` → `posterUrlPreview`; `unoptimized` снят из `PosterImage`; `dangerouslyAllowLocalIP` для dev из-за VPN fake-IP)
-- После деплоя глянуть Vercel Usage → Image Optimization (план Б — вернуть `unoptimized`, превью остаются)
+- ~~После деплоя глянуть Vercel Usage → Image Optimization~~ снят: деплой переехал с Vercel на свой VPS — лимитов оптимизатора нет, он работает на своём сервере (цена — CPU и кэш в `.next/cache/images`, следить при случае за диском)
 - ~~Честный `sizes` для `MovieRow`~~ ✅ (`(max-width: 639px) 100vw, 160px`; на десктопе `w=` упал 384→256)
 - ~~`useSyncExternalStore` для localStorage-бейджа `UserNotify`~~ ✅ (ушли `useEffect`+`useState`, лечит lint-ошибку; кастомное событие для своей вкладки, `"storage"` — для чужих)
 
