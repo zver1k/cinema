@@ -60,7 +60,9 @@ function InfiniteGrid({ items }: { items: Premier[] }) {
                   })}
                 </CardAction>
                 <CardTitle>
-                  {film.nameRu ?? film.nameEn ?? "Без названия"}
+                  <Link href={`/movies/${film.kinopoiskId}`}>
+                    {film.nameRu ?? film.nameEn ?? "Без названия"}
+                  </Link>
                 </CardTitle>
                 <CardDescription>
                   <div className="flex flex-col gap-2 ">

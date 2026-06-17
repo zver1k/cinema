@@ -1,29 +1,21 @@
 import Link from "next/link";
 
-import { getRandomItems } from "@/shared/lib/array";
+import { getPremieresItems } from "@/shared/lib/array";
 import { getFilmPremieres } from "@/shared/api/premieres";
 import PosterImage from "@/shared/ui/poster-image";
 
 async function SidebarFooter() {
   const { items = [] } = await getFilmPremieres();
-  const randomItems = getRandomItems(items, 5);
-  const date = new Date();
-  const month = new Intl.DateTimeFormat("ru-RU", {
-    month: "long",
-  }).format(new Date(date.getFullYear(), date.getMonth() + 1, 1));
-  const year = new Date().getFullYear().toString();
+  const premierItems = getPremieresItems(items, 5);
   return (
     <div className="mt-4 flex flex-col gap-3">
-      <span className="font-bold text-white">
-        Новинки {month} {year}
-      </span>
-      {randomItems.map((film) => {
+      <span className="font-bold text-white">Новинки</span>
+      {premierItems.map((film) => {
         const formatted = new Intl.DateTimeFormat("ru-RU", {
           day: "numeric",
           month: "long",
           year: "numeric",
         }).format(new Date(film.premiereRu));
-
         return (
           <Link
             href={`/movies/${film.kinopoiskId}`}

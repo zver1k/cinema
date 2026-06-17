@@ -1,19 +1,12 @@
 import { PremierResponse } from "@/shared/types/api.types";
+import dayjs from "dayjs";
 
 export const getFilmPremieres = async (): Promise<PremierResponse> => {
-  const date = new Date();
-  const firstDayOfNextMonth = new Date(
-    date.getFullYear(),
-    date.getMonth() + 1,
-    1,
-  );
-  const revalidate = Math.floor(
-    (firstDayOfNextMonth.getTime() - date.getTime()) / 1000,
-  );
-  const year = date.getFullYear().toString();
-  const month = new Intl.DateTimeFormat("en-US", {
-    month: "long",
-  }).format(new Date(date.getFullYear(), date.getMonth() + 1, 1));
+  const now = dayjs();
+  const year = now.year();
+  const month = now.format("MMMM");
+  const revalidate = 60 * 60 * 12;
+
   try {
     const response = await fetch(
       `${process.env.API_URL}/api/v2.2/films/premieres?year=${year}&month=${month}`,

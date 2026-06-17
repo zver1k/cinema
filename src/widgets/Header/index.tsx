@@ -15,7 +15,7 @@ async function Header() {
         </Suspense>
       </div>
 
-      <div className="order-last flex h-12 min-w-0 flex-[1_0_100%] items-center rounded-full bg-card px-3 sm:h-14 sm:px-4 md:order-none md:flex-1 lg:px-6">
+      <div className="order-last flex h-12 min-w-0 flex-[1_0_100%] items-center rounded-full bg-card px-3 sm:h-14 sm:px-4 md:order-0 md:flex-1 lg:px-6">
         <Suspense>
           <Search />
         </Suspense>

@@ -21,13 +21,7 @@ async function MoviesPage({
 }) {
   await connection();
 
-  const {
-    keyword,
-    type,
-    view = "pagination",
-    page,
-    genre,
-  } = await searchParams;
+  const { keyword, type, view = "infinite", page, genre } = await searchParams;
   const currentPage = Number(page) || 1;
   const activeGenre = Number(genre) || 0;
   const viewParams = (v: string) => {
@@ -42,7 +36,7 @@ async function MoviesPage({
   return (
     <div>
       <GenreFilter genres={genres} activeGenre={activeGenre} />
-      <div className="pb-2">
+      <div className="pb-2 flex gap-2 justify-end">
         <Button asChild variant={view === "pagination" ? "default" : "outline"}>
           <Link href={viewParams("pagination")}>Пагинация</Link>
         </Button>

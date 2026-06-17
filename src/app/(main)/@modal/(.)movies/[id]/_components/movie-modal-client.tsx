@@ -16,8 +16,7 @@ function MovieModalClient({ film }: { film: FilmDetail | null }) {
       onClick={() => router.back()}
     >
       <div
-        className="relative flex flex-col items-center md:flex-row w-full max-w-[600px] max-h-[90dvh] overflow-hidden rounded-3xl border bg-card shadow-2xl"
-        style={{ maxWidth: "600px", width: "100%" }}
+        className="relative flex flex-col items-center p-3 md:flex-row w-full max-w-150 max-h-[90dvh] overflow-hidden rounded-3xl border bg-card shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <Button

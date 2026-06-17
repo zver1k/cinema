@@ -24,7 +24,7 @@ export const auth = betterAuth({
           from: "noreply@mail.damirmedia.ru",
           to: user.email,
           subject: "Подтвердите ваш email",
-          html: `Нажмите чтобы сменить email на ${newEmail}: ${url}`,
+          html: `Нажмите, чтобы сменить email на ${newEmail}: <a href="${url}">Сменить email</a>`,
         });
       },
     },
