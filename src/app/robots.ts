@@ -7,5 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/movies/", "/person/"],
     },
+    sitemap: `${process.env.SITE_URL}/sitemap.xml`,
   };
 }
