@@ -5,6 +5,7 @@ import { Button } from "@/shared/ui/button";
 import SidebarHeader from "@/widgets/Sidebar/SidebarHeader";
 import LoginForm from "@/app/(auth)/login/_components/login-form";
 import AuthSection from "@/widgets/AuthSection";
+import BackButton from "@/shared/ui/back-button";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +15,7 @@ function Page() {
       <div className="flex w-full items-center justify-center px-4 py-4 lg:w-1/2">
         <div className="w-full max-w-md">
           <SidebarHeader />
-
+          <BackButton />
           <h1 className="text-3xl font-bold tracking-tight">С возвращением</h1>
 
           <p className="mt-2 text-sm leading-6 text-muted-foreground">
