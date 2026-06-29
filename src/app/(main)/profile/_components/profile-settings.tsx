@@ -1,5 +1,5 @@
 import ProfileCard from "@/app/(main)/profile/_components/profile-card";
-import ProfilePrivate from "@/app/(main)/profile/_components/profile-private";
+import ProfileLogout from "@/app/(main)/profile/_components/profile-logout";
 
 export default function ProfileSettings({
   name,
@@ -9,9 +9,9 @@ export default function ProfileSettings({
   email: string;
 }) {
   return (
-    <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
+    <section className="grid gap-4">
       <ProfileCard name={name} email={email} />
-      <ProfilePrivate />
+      <ProfileLogout />
     </section>
   );
 }
