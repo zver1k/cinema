@@ -17,8 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signUp } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import PasswordInput from "@/shared/ui/password-input";
 
 const registerSchema = z.object({
   name: z
@@ -42,7 +41,7 @@ function strengthPassword(password: string): number {
 
 function RegisterForm() {
   "use no memo";
-  const [showPassword, setShowPassword] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -86,21 +85,7 @@ function RegisterForm() {
 
         <Field>
           <FieldLabel htmlFor="password">Пароль</FieldLabel>
-          <div className="relative">
-            <Input
-              className="pr-10"
-              {...register("password")}
-              id="password"
-              type={showPassword ? "text" : "password"}
-            />
-            <button
-              onClick={() => setShowPassword((prev) => !prev)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-primary"
-              type="button"
-            >
-              {showPassword ? <EyeOff /> : <Eye />}
-            </button>
-          </div>
+          <PasswordInput {...register("password")} id="password" />
           <FieldError>{errors.password?.message}</FieldError>
           <div className="flex gap-1">
             <div
