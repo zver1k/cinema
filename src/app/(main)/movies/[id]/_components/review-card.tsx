@@ -5,14 +5,14 @@ import dayjs from "dayjs";
 import { Reviews } from "@/shared/types/api.types";
 
 function ReviewCard({ review }: { review: Reviews }) {
-  const dateNormal = dayjs(review.date);
+  const dateNormal = dayjs(review.date).format("DD.MM.YYYY");
   const text = review.description.replace(/<[^>]*>/g, "");
   return (
     <div className="mb-3.5 rounded-[14px] border border-border muted-foreground p-4.5">
       <div className="mb-2.5 flex items-center gap-3">
         <div>
           <div className="text-[14px] font-semibold">{review.author}</div>
-          <div className="text-[12px]">{dateNormal.format("DD.MM.YYYY")}</div>
+          <div className="text-[12px]">{dateNormal}</div>
         </div>
         <div className="ml-auto inline-flex gap-2 text-[14px] font-bold">
           <div className="text-green-500">
