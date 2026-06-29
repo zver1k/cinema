@@ -9,7 +9,6 @@ import {
 } from "@/shared/ui/field";
 import { Input } from "@/shared/ui/input";
 import { Button } from "@/shared/ui/button";
-import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -18,6 +17,7 @@ import { toast } from "sonner";
 import z from "zod";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import ForgotPassword from "@/app/(auth)/login/_components/forgot-password";
 
 const loginSchema = z.object({
   email: z.email("Неверный Email или пароль"),
@@ -79,9 +79,7 @@ function LoginForm() {
           <FieldError>{errors.password?.message}</FieldError>
           <div className="flex items-center justify-between gap-3">
             <FieldDescription>Минимум 8 символов</FieldDescription>
-            <Button asChild variant="link" className="h-auto p-0">
-              <Link href="/forgot-password">Забыли?</Link>
-            </Button>
+            <ForgotPassword />
           </div>
         </Field>
 
