@@ -27,7 +27,7 @@ function Filmography({ films }: { films: PersonFilm[] }) {
     <section className="mt-6 w-full min-w-0">
       <h3 className="mb-3 text-[18px] font-semibold">Фильмография</h3>
       <Tabs defaultValue={entries[0]?.[0]} className="w-full min-w-0">
-        <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+        <div className="-mx-4 overflow-x-auto pb-2 px-4 sm:mx-0 sm:px-0">
           <TabsList variant="line" className="w-max min-w-full justify-start">
             {entries.map(([key, groupFilms]) => (
               <TabsTrigger
