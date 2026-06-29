@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import dayjs from "dayjs";
+import "dayjs/locale/ru";
 import { getPremieresItems } from "@/shared/lib/array";
 import { getFilmPremieres } from "@/shared/api/premieres";
 import PosterImage from "@/shared/ui/poster-image";
@@ -11,11 +13,6 @@ async function SidebarFooter() {
     <div className="mt-4 flex flex-col gap-3">
       <span className="font-bold text-white">Новинки</span>
       {premierItems.map((film) => {
-        const formatted = new Intl.DateTimeFormat("ru-RU", {
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        }).format(new Date(film.premiereRu));
         return (
           <Link
             href={`/movies/${film.kinopoiskId}`}
@@ -34,7 +31,7 @@ async function SidebarFooter() {
                 {film.nameRu}
               </span>
               <span className="text-xs text-zinc-400 transition group-hover:text-primary">
-                {formatted}
+                {dayjs(film.premiereRu).locale("ru").format("DD MMMM YYYY г.")}
               </span>
             </div>
           </Link>

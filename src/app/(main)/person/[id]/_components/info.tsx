@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import "dayjs/locale/ru";
 import { getAgeWord } from "@/shared/lib/getAgeWord";
 import PosterImage from "@/shared/ui/poster-image";
 import { CarouselFacts } from "@/app/(main)/person/[id]/_components/facts";
@@ -8,12 +9,16 @@ function PersonInfo({ person }: { person: PersonDetail }) {
   const info = [
     {
       label: "Дата рождения",
-      value: person.birthday && dayjs(person.birthday).format("DD.MM.YYYY"),
+      value:
+        person.birthday &&
+        dayjs(person.birthday).locale("ru").format("DD MMMM YYYY г."),
     },
     { label: "Место рождения", value: person.birthplace },
     {
       label: "Дата смерти",
-      value: person.death && dayjs(person.death).format("DD.MM.YYYY"),
+      value:
+        person.death &&
+        dayjs(person.death).locale("ru").format("DD MMMM YYYY г."),
     },
     { label: "Место смерти", value: person.deathplace },
     {

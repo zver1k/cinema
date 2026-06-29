@@ -1,5 +1,7 @@
 "use client";
 
+import dayjs from "dayjs";
+import "dayjs/locale/ru";
 import { Premier } from "@/shared/types/api.types";
 import {
   Card,
@@ -30,11 +32,6 @@ function InfiniteGrid({ items }: { items: Premier[] }) {
     <>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {items.slice(0, visibleCount).map((film) => {
-          const formattedDate = new Intl.DateTimeFormat("ru-RU", {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-          }).format(new Date(film.premiereRu));
           return (
             <Card
               key={film.kinopoiskId}
@@ -87,7 +84,11 @@ function InfiniteGrid({ items }: { items: Premier[] }) {
                     {film.year && <p>Год производства: {film.year} г.</p>}
                     <div className="flex flex-wrap gap-2">
                       Премьера в России:
-                      <span className="font-semibold">{formattedDate}</span>
+                      <span className="font-semibold">
+                        {dayjs(film.premiereRu)
+                          .locale("ru")
+                          .format("DD MMMM YYYY г.")}
+                      </span>
                     </div>
                   </div>
                 </CardDescription>
