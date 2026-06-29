@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@source "../src/app/(main)/@modal/**/*.tsx";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -50,7 +49,7 @@
   --animate-aurora: aurora 8s ease-in-out infinite alternate;
   @keyframes aurora {
   0% {
-    background-position: 0% 50%;
+    background-position: 0 50%;
     transform: rotate(-5deg) scale(0.9);
     }
   25% {
@@ -62,11 +61,11 @@
     transform: rotate(-3deg) scale(0.95);
     }
   75% {
-    background-position: 50% 0%;
+    background-position: 50% 0;
     transform: rotate(3deg) scale(1.05);
     }
   100% {
-    background-position: 0% 50%;
+    background-position: 0 50%;
     transform: rotate(-5deg) scale(0.9);
     }
   }
