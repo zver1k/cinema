@@ -2,22 +2,15 @@
 
 import { Card, CardContent } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
-import { signOut } from "@/lib/auth-client";
 import { LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useSignOut } from "@/shared/hooks/use-sign-out";
 
 function ProfileLogout() {
-  const router = useRouter();
+  const handleSignOut = useSignOut();
   return (
     <Card className="gap-4 p-3">
       <CardContent className="text-center p-6">
-        <Button
-          variant="destructive"
-          onClick={async () => {
-            await signOut();
-            router.push("/");
-          }}
-        >
+        <Button variant="destructive" onClick={handleSignOut}>
           <LogOut size={16} />
           Выйти из аккаунта
         </Button>

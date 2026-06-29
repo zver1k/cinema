@@ -1,17 +1,17 @@
 "use client";
 
-import { signOut, useSession } from "@/lib/auth-client";
+import { useSession } from "@/lib/auth-client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";
 import { Button } from "@/shared/ui/button";
 import Link from "next/link";
 import { Spinner } from "@/shared/ui/spinner";
-import { useRouter } from "next/navigation";
 import { avatarName } from "@/shared/lib/avatar-fallback";
+import { useSignOut } from "@/shared/hooks/use-sign-out";
 
 function UserMenu() {
   const { data: session, isPending, error } = useSession();
-  const router = useRouter();
+  const handleSignOut = useSignOut();
   if (isPending) return <Spinner />;
   if (error || !session)
     return (
@@ -37,14 +37,7 @@ function UserMenu() {
             {session.user.name}
           </span>
         </Link>
-        <Button
-          size="xs"
-          variant="secondary"
-          onClick={async () => {
-            await signOut();
-            router.push("/");
-          }}
-        >
+        <Button size="xs" variant="secondary" onClick={handleSignOut}>
           Выйти
         </Button>
       </div>
