@@ -14,10 +14,10 @@ import { Button } from "@/shared/ui/button";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signUp } from "@/lib/auth-client";
+import { signUp, useSession } from "@/lib/auth-client";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import PasswordInput from "@/shared/ui/password-input";
+import { useRouter } from "next/navigation";
 
 const registerSchema = z.object({
   name: z
@@ -27,7 +27,7 @@ const registerSchema = z.object({
   password: z
     .string()
     .min(8, "Пароль должен быть более 8 символов")
-    .max(60, "Никнейм должен быть не более 60 символов"),
+    .max(60, "Пароль должен быть не более 60 символов"),
   email: z.email("Неверный адрес электронной почты"),
   terms: z.literal(true, { error: "Необходимо принять условия" }),
 });
@@ -50,9 +50,10 @@ function RegisterForm() {
   } = useForm({
     resolver: zodResolver(registerSchema),
   });
+  const router = useRouter();
+  const { refetch } = useSession();
   const password = watch("password") ?? "";
   const strength = strengthPassword(password);
-  const router = useRouter();
   const onSubmit = async (formData: z.infer<typeof registerSchema>) => {
     const { data, error } = await signUp.email({
       name: formData.name,
@@ -64,7 +65,9 @@ function RegisterForm() {
     }
     if (data) {
       toast("Вы успешно зарегистрировались!");
-      router.push("/");
+      await refetch();
+      router.refresh();
+      router.replace("/");
     }
   };
   return (

@@ -12,7 +12,7 @@ import { Button } from "@/shared/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signIn } from "@/lib/auth-client";
+import { signIn, useSession } from "@/lib/auth-client";
 import { toast } from "sonner";
 import z from "zod";
 import ForgotPassword from "@/app/(auth)/login/_components/forgot-password";
@@ -22,6 +22,14 @@ const loginSchema = z.object({
   email: z.email("Неверный Email или пароль"),
   password: z.string("Неверный Email или пароль"),
 });
+
+function getSafeRedirectPath(redirect: string | null) {
+  if (!redirect || !redirect.startsWith("/") || redirect.startsWith("//")) {
+    return "/";
+  }
+
+  return redirect;
+}
 
 function LoginForm() {
   const {
@@ -33,8 +41,9 @@ function LoginForm() {
     resolver: zodResolver(loginSchema),
   });
   const router = useRouter();
+  const { refetch } = useSession();
   const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect");
+  const redirect = getSafeRedirectPath(searchParams.get("redirect"));
   const onSubmit = async (formData: z.infer<typeof loginSchema>) => {
     const { data, error } = await signIn.email({
       email: formData.email,
@@ -45,7 +54,9 @@ function LoginForm() {
     }
     if (data) {
       toast("Вы успешно авторизовались!");
-      router.push(redirect || "/");
+      await refetch();
+      router.refresh();
+      router.replace(redirect);
     }
   };
   return (
