@@ -80,7 +80,7 @@ function ProfilePassword() {
             disabled={isPasswordSubmitting}
             type="submit"
             variant="outline"
-            className="w-full sm:w-fit"
+            className="w-full mt-2 sm:w-fit"
           >
             <Pencil size={16} />
             Сменить пароль
