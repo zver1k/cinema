@@ -42,7 +42,7 @@ function InfiniteGrid({ items }: { items: Premier[] }) {
                   <PosterImage
                     alt={film.nameRu || film.nameEn || ""}
                     src={film.posterUrlPreview}
-                    sizes="(max-width: 639px) calc(100vw), (max-width: 767px) calc((100vw - 10px) / 2), (max-width: 1023px) calc((100vw - 350px) / 4), calc((100vw - 370px) / 6)"
+                    sizes="min(100vw, 384px)"
                   />
                 </Link>
               </div>
